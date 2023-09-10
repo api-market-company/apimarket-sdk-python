@@ -34,10 +34,12 @@ apimarket
 =========
 
 
-    Add a short description here!
+    
+    API Market Python Open Source Development
 
 
-A longer description of your project goes here...
+
+API Market SDK for Python Development
 
 
 .. _pyscaffold-notes:
