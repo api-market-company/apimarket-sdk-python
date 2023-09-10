@@ -37,9 +37,27 @@ apimarket
     
     API Market Python Open Source Development
 
+=========
+Fetch CURP details
+=========
 
 
-API Market SDK for Python Development
+```python 
+import apimarket
+result = apimarket.fetch_curp_details("LOOA531113HTCPBN07", api_key="")
+print(result)
+```
+
+
+=========
+Fetch CURP details from Bash
+=========
+
+
+```bash
+apimarket -c SATC000125HBCNRRA6
+```
+
 
 
 .. _pyscaffold-notes:
