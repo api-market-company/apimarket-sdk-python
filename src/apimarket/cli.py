@@ -3,7 +3,7 @@ import logging
 import sys
 import json
 
-from apimarket import __version__
+from apimarket import __version__, fetch_curp_details
 
 __author__ = "Carlos Eduardo Sanchez Torres (sanchezcarlosjr)"
 __copyright__ = "API MARKET"
@@ -36,7 +36,7 @@ class CURPDetailsAction(argparse.Action):
         _logger.debug("Fetching apimarket...")
         print(f"{json.dumps(fetch_curp_details(curp))}")
         _logger.debug("Script ends here")
-        setattr(namespace, self.dest, values)
+        setattr(namespace, self.dest, curp)
 
 
 
@@ -57,6 +57,8 @@ def parse_args(args):
         version=f"apimarket {__version__}",
     )
     parser.add_argument(
+        "-c",
+        "--curp",
         dest="curp", 
         help="Write a valid CURP. For instance, LOOA531113HTCPBN07", 
         type=str, 

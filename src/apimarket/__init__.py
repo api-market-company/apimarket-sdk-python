@@ -19,7 +19,7 @@ finally:
 
 
 def fetch_curp_details(curp,api_key=False):
-    url = "https://apimarket.mx/api/renapo/grupo/valida-curp?curp=LOOA531113HTCPBN07"
+    url = f"https://apimarket.mx/api/renapo/grupo/valida-curp?curp={curp}"
     headers = {
         "Authorization": f"Bearer {config('APIMARKET_API_KEY',default=api_key)}",
         "Accept": "application/json",
