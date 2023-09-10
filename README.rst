@@ -37,26 +37,28 @@ apimarket
     
     API Market Python Open Source Development
 
+
+Installation
 =========
+
+    pip install apimarket
+
+
 Fetch CURP details
 =========
 
 
-```python 
-import apimarket
-result = apimarket.fetch_curp_details("LOOA531113HTCPBN07", api_key="")
-print(result)
-```
+    import apimarket
+    result = apimarket.fetch_curp_details("LOOA531113HTCPBN07", api_key="")
+    print(result)
 
 
-=========
-Fetch CURP details from Bash
+
+CLI
 =========
 
 
-```bash
-apimarket -c SATC000125HBCNRRA6
-```
+    apimarket -c LOOA531113HTCPBN07
 
 
 
