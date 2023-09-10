@@ -40,25 +40,30 @@ apimarket
 
 Installation
 =========
+.. code-block:: bash
 
-    pip install apimarket
+   pip install apimarket
 
 
 Fetch CURP details
 =========
+.. code-block:: python3
 
+   import apimarket
+   result = apimarket.fetch_curp_details("LOOA531113HTCPBN07", api_key="")
+   print(result)
 
-    import apimarket
-    result = apimarket.fetch_curp_details("LOOA531113HTCPBN07", api_key="")
-    print(result)
+    
 
 
 
 CLI
 =========
 
+.. code-block:: bash
 
-    apimarket -c LOOA531113HTCPBN07
+   apimarket -c LOOA531113HTCPBN07
+   
 
 
 
