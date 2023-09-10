@@ -24,13 +24,27 @@ Installation
 
    pip install apimarket
 
+Set API KEY
+------------
+There are three different ways to set the API key: you can set the API key as an environment variable in your shell, in the .env file, or call functions with your API key.
+
+.. code-block:: bash
+
+   export APIMARKET_API_KEY="REPLACE-WITH-YOUR-API-HERE"
+
+.. code-block:: bash
+
+   APIMARKET_API_KEY="REPLACE-WITH-YOUR-API-HERE"
+
+
 Fetch CURP details
 ------------------
 
 .. code-block:: python3
 
    import apimarket
-   result = apimarket.fetch_curp_details("LOOA531113HTCPBN07", api_key="")
+   # Also it is possible apimarket.fetch_curp_details("LOOA531113HTCPBN07", api_key="")
+   result = apimarket.fetch_curp_details("LOOA531113HTCPBN07") 
    print(result)
 
 CLI
