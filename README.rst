@@ -70,6 +70,15 @@ Combine different requests
    apimarket -c LOOA531113HTCPBN07 --get-rfc-from-curp LOOA531113HTCPBN07  | jq -s 'add'
 
 
+Read a CSV with your customs fields
++++++++++++
+csvcut belongs to csvkit library
+
+.. code-block:: bash
+
+   csvcut apimarket-consulta.csv -c 'CURP' | tail | xargs -P 8 -I {} apimarket -c {} 2>"error.txt" | jq -s > curps.jso
+
+
 .. _pyscaffold-notes:
 
 Note
