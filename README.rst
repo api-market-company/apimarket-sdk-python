@@ -37,8 +37,11 @@ There are three different ways to set the API key: you can set the API key as an
    APIMARKET_API_KEY="REPLACE-WITH-YOUR-API-HERE"
 
 
+Python
+-------
+
 Fetch CURP details
-------------------
+++++++++++++++++++
 
 .. code-block:: python3
 
@@ -48,11 +51,24 @@ Fetch CURP details
    print(result)
 
 CLI
----
+----
+
+Fetch CURP details
++++++++++++++++++++
+
 
 .. code-block:: bash
 
    apimarket -c LOOA531113HTCPBN07
+
+Combine different requests
++++++++++++++++++++++++++++
+
+
+.. code-block:: bash
+
+   apimarket -c LOOA531113HTCPBN07 --get-rfc-from-curp LOOA531113HTCPBN07  | jq -s 'add'
+
 
 .. _pyscaffold-notes:
 
