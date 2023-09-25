@@ -179,3 +179,14 @@ def validate_sat_data(nombre, rfc, regimen, cp, api_key=False):
     
     response = requests.post(url, headers=headers)
     return response.json()['data']
+
+def search_credit_by_nss(nss, api_key=False):
+    url = f"https://apimarket.mx/api/infonavit/grupo/buscar-credito?nss={nss}"
+    
+    headers = {
+        "Authorization": f"Bearer {config('APIMARKET_API_KEY', default=api_key)}",
+        "Accept": "application/json",
+    }
+    
+    response = requests.post(url, headers=headers)
+    return response.json()['data']
