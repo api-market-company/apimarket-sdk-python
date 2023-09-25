@@ -76,7 +76,7 @@ csvcut belongs to csvkit library
 
 .. code-block:: bash
 
-   csvcut apimarket-consulta.csv -c 'CURP' | xargs -P 8 -I {} apimarket -c {} 2>"error.txt" | jq -s > curps.jso
+   csvcut apimarket-consulta.csv -c 'CURP' | xargs -P 8 -I {} apimarket -c {} 2>"error.txt" | jq -s > curps.json
 
 
 .. _pyscaffold-notes:
