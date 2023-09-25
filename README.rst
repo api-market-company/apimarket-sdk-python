@@ -39,6 +39,7 @@ There are three different ways to set the API key: you can set the API key as an
 
 Python
 -------
+You can consult the full list on `python_docs`_.
 
 Fetch CURP details
 ++++++++++++++++++
@@ -52,6 +53,7 @@ Fetch CURP details
 
 CLI
 ----
+You can consult the full list on `python_cli`_.
 
 Fetch CURP details
 +++++++++++++++++++
@@ -85,3 +87,7 @@ Note
 ----
 
 This project has been set up using PyScaffold 4.5. For details and usage information on PyScaffold see https://pyscaffold.org/.
+
+
+.. _python_docs: https://github.com/api-market-company/apimarket-sdk-python/blob/main/src/apimarket/__init__.py
+.. _cli_docs: https://github.com/api-market-company/apimarket-sdk-python/blob/main/src/apimarket/cli.py
