@@ -48,6 +48,101 @@ class GetCURPFromDetailsAction(argparse.Action):
         setattr(namespace, self.dest, values)
 
 
+class GetRFCFromCURPAction(argparse.Action):
+    def __call__(self, parser, namespace, curp, option_string=None):
+        _logger.debug("Fetching RFC from CURP...")
+        print(f"{json.dumps(get_rfc_from_curp(curp))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, curp)
+
+class CalculateRFCAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, api_key = values
+        _logger.debug("Calculating RFC...")
+        print(f"{json.dumps(calculate_rfc(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, api_key))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, values)
+
+class LocateUMFByCPAction(argparse.Action):
+    def __call__(self, parser, namespace, cp, option_string=None):
+        _logger.debug("Locating UMF by CP...")
+        print(f"{json.dumps(locate_umf_by_cp(cp))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, cp)
+
+
+class LocateNSSByCURPAction(argparse.Action):
+    def __call__(self, parser, namespace, curp, option_string=None):
+        _logger.debug("Locating NSS by CURP...")
+        print(f"{json.dumps(locate_nss_by_curp(curp))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, curp)
+
+
+class CheckVigencyAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        nss, curp, api_key = values
+        _logger.debug("Checking vigency...")
+        print(f"{json.dumps(check_vigency(nss, curp, api_key))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, values)
+
+
+class GetClinicaByCURPAction(argparse.Action):
+    def __call__(self, parser, namespace, curp, option_string=None):
+        _logger.debug("Getting clinic by CURP...")
+        print(f"{json.dumps(get_clinica_by_curp(curp))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, curp)
+
+
+class GetLaborHistoryAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        curp, nss, api_key = values
+        _logger.debug("Fetching labor history...")
+        print(f"{json.dumps(get_labor_history(curp, nss, api_key))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, values)
+
+
+class ValidateCedulaAction(argparse.Action):
+    def __call__(self, parser, namespace, cedula, option_string=None):
+        _logger.debug("Validating cedula...")
+        print(f"{json.dumps(validate_cedula(cedula))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, cedula)
+
+class ValidateCertificateAction(argparse.Action):
+    def __call__(self, parser, namespace, folio, option_string=None):
+        _logger.debug("Validating certificate...")
+        print(f"{json.dumps(validate_certificate(folio))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, folio)
+
+class ObtainCedulaAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        nombres, paterno, materno, api_key = values
+        _logger.debug("Obtaining cedula...")
+        print(f"{json.dumps(obtain_cedula(nombres, paterno, materno, api_key))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, values)
+
+class ValidateSATDataAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        nombre, rfc, regimen, cp, api_key = values
+        _logger.debug("Validating SAT data...")
+        print(f"{json.dumps(validate_sat_data(nombre, rfc, regimen, cp, api_key))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, values)
+
+class SearchCreditByNSSAction(argparse.Action):
+    def __call__(self, parser, namespace, nss, option_string=None):
+        _logger.debug("Searching credit by NSS...")
+        print(f"{json.dumps(search_credit_by_nss(nss))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, nss)
+
+
 def parse_args(args):
     """Parse command line parameters
 
@@ -79,6 +174,18 @@ def parse_args(args):
                         action=GetCURPFromDetailsAction,
                         help='Fetch CURP based on personal details.'
                        )
+    parser.add_argument('--get-rfc-from-curp', action=GetRFCFromCURPAction, help='Fetch RFC based on CURP.')
+    parser.add_argument('--calculate-rfc', nargs=7, metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO', 'API_KEY'), action=CalculateRFCAction, help='Calculate RFC based on personal details.')
+    parser.add_argument('--locate-umf-by-cp', action=LocateUMFByCPAction, help='Locate UMF based on postal code.')
+    parser.add_argument('--locate-nss-by-curp', action=LocateNSSByCURPAction, help='Locate NSS based on CURP.')
+    parser.add_argument('--check-vigency', nargs=3, metavar=('NSS', 'CURP', 'API_KEY'), action=CheckVigencyAction, help='Check vigency of NSS and CURP.')
+    parser.add_argument('--get-clinica-by-curp', action=GetClinicaByCURPAction, help='Get clinic details by CURP.')
+    parser.add_argument('--get-labor-history', nargs=3, metavar=('CURP', 'NSS', 'API_KEY'), action=GetLaborHistoryAction, help='Get labor history by CURP and NSS.')
+    parser.add_argument('--validate-cedula', action=ValidateCedulaAction, help='Validate a cedula.')
+    parser.add_argument('--validate-certificate', action=ValidateCertificateAction, help='Validate a certificate by its folio.')
+    parser.add_argument('--obtain-cedula', nargs=4, metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'API_KEY'), action=ObtainCedulaAction, help='Obtain cedula based on personal details.')
+    parser.add_argument('--validate-sat-data', nargs=5, metavar=('NOMBRE', 'RFC', 'REGIMEN', 'CP', 'API_KEY'), action=ValidateSATDataAction, help='Validate SAT data.')
+    parser.add_argument('--search-credit-by-nss', action=SearchCreditByNSSAction, help='Search credit by NSS.')
     parser.add_argument(
         "-v",
         "--verbose",
