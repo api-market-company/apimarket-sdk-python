@@ -3,7 +3,7 @@ import logging
 import sys
 import json
 
-from apimarket import __version__, fetch_curp_details
+from apimarket import __version__, fetch_curp_details, get_curp_from_details
 
 __author__ = "Carlos Eduardo Sanchez Torres (sanchezcarlosjr)"
 __copyright__ = "API MARKET"
@@ -39,6 +39,14 @@ class CURPDetailsAction(argparse.Action):
         setattr(namespace, self.dest, curp)
 
 
+class GetCURPFromDetailsAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo, api_key = values
+        _logger.debug("Fetching apimarket...")
+        print(f"{json.dumps(get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo, api_key))}")
+        _logger.debug("Script ends here")
+        setattr(namespace, self.dest, values)
+
 
 def parse_args(args):
     """Parse command line parameters
@@ -65,6 +73,12 @@ def parse_args(args):
         metavar="CURP",
         action=CURPDetailsAction
     )
+    parser.add_argument('--get-curp-details', 
+                        nargs=9,
+                        metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO', 'CLAVE_ENTIDAD', 'SEXO', 'API_KEY'),
+                        action=GetCURPFromDetailsAction,
+                        help='Fetch CURP based on personal details.'
+                       )
     parser.add_argument(
         "-v",
         "--verbose",
