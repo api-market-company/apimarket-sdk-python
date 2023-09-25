@@ -26,122 +26,89 @@ _logger = logging.getLogger(__name__)
 # executable/script.
 
 
-class CURPDetailsAction(argparse.Action):
-
-    def __init__(self, option_strings, dest, nargs=None, **kwargs):
-        if nargs is not None:
-            raise ValueError("nargs not allowed")
-        super().__init__(option_strings, dest, **kwargs)
-
-    def __call__(self, parser, namespace, curp, option_string=None):
+class CLIAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
         _logger.debug("Fetching apimarket...")
-        print(f"{json.dumps(fetch_curp_details(curp))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, curp)
-
-
-class GetCURPFromDetailsAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo, api_key = values
-        _logger.debug("Fetching apimarket...")
-        print(f"{json.dumps(get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo, api_key))}")
+        try:
+            if isinstance(values, (str, int)):
+                values = [values]
+            print(f"{json.dumps(self.fetch(*values))}")
+        except Exception as e:
+            raise Exception(f"The values [{values}] in {self.__class__.__name__} generated the error: "+str(e))
         _logger.debug("Script ends here")
         setattr(namespace, self.dest, values)
 
 
-class GetRFCFromCURPAction(argparse.Action):
-    def __call__(self, parser, namespace, curp, option_string=None):
-        _logger.debug("Fetching RFC from CURP...")
-        print(f"{json.dumps(get_rfc_from_curp(curp))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, curp)
-
-class CalculateRFCAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, api_key = values
-        _logger.debug("Calculating RFC...")
-        print(f"{json.dumps(calculate_rfc(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, api_key))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, values)
-
-class LocateUMFByCPAction(argparse.Action):
-    def __call__(self, parser, namespace, cp, option_string=None):
-        _logger.debug("Locating UMF by CP...")
-        print(f"{json.dumps(locate_umf_by_cp(cp))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, cp)
+class CURPDetailsAction(CLIAction):
+    def fetch(self, curp):
+        return fetch_curp_details(curp)
 
 
-class LocateNSSByCURPAction(argparse.Action):
-    def __call__(self, parser, namespace, curp, option_string=None):
-        _logger.debug("Locating NSS by CURP...")
-        print(f"{json.dumps(locate_nss_by_curp(curp))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, curp)
+class GetCURPFromDetailsAction(CLIAction):
+    def fetch(self, nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo, api_key):
+        return get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo, api_key)
 
 
-class CheckVigencyAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        nss, curp, api_key = values
-        _logger.debug("Checking vigency...")
-        print(f"{json.dumps(check_vigency(nss, curp, api_key))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, values)
+class GetRFCFromCURPAction(CLIAction):
+    def fetch(self, curp):
+        return get_rfc_from_curp(curp)
 
 
-class GetClinicaByCURPAction(argparse.Action):
-    def __call__(self, parser, namespace, curp, option_string=None):
-        _logger.debug("Getting clinic by CURP...")
-        print(f"{json.dumps(get_clinica_by_curp(curp))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, curp)
+class CalculateRFCAction(CLIAction):
+    def fetch(self, nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, api_key):
+        return calculate_rfc(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, api_key)
 
 
-class GetLaborHistoryAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        curp, nss, api_key = values
-        _logger.debug("Fetching labor history...")
-        print(f"{json.dumps(get_labor_history(curp, nss, api_key))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, values)
+class LocateUMFByCPAction(CLIAction):
+    def fetch(self, cp):
+        return locate_umf_by_cp(cp)
 
 
-class ValidateCedulaAction(argparse.Action):
-    def __call__(self, parser, namespace, cedula, option_string=None):
-        _logger.debug("Validating cedula...")
-        print(f"{json.dumps(validate_cedula(cedula))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, cedula)
+class LocateNSSByCURPAction(CLIAction):
+    def fetch(self, curp):
+        return locate_nss_by_curp(curp)
 
-class ValidateCertificateAction(argparse.Action):
-    def __call__(self, parser, namespace, folio, option_string=None):
-        _logger.debug("Validating certificate...")
-        print(f"{json.dumps(validate_certificate(folio))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, folio)
 
-class ObtainCedulaAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        nombres, paterno, materno, api_key = values
-        _logger.debug("Obtaining cedula...")
-        print(f"{json.dumps(obtain_cedula(nombres, paterno, materno, api_key))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, values)
+class CheckVigencyAction(CLIAction):
+    def fetch(self, nss, curp, api_key):
+        return check_vigency(nss, curp, api_key)
 
-class ValidateSATDataAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        nombre, rfc, regimen, cp, api_key = values
-        _logger.debug("Validating SAT data...")
-        print(f"{json.dumps(validate_sat_data(nombre, rfc, regimen, cp, api_key))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, values)
 
-class SearchCreditByNSSAction(argparse.Action):
-    def __call__(self, parser, namespace, nss, option_string=None):
-        _logger.debug("Searching credit by NSS...")
-        print(f"{json.dumps(search_credit_by_nss(nss))}")
-        _logger.debug("Script ends here")
-        setattr(namespace, self.dest, nss)
+class GetClinicaByCURPAction(CLIAction):
+    def fetch(self, curp):
+        return get_clinica_by_curp(curp)
+
+
+class GetLaborHistoryAction(CLIAction):
+    def fetch(self, curp, nss, api_key):
+        return get_labor_history(curp, nss, api_key)
+
+
+class ValidateCedulaAction(CLIAction):
+    def fetch(self, cedula):
+        return validate_cedula(cedula)
+
+
+class ValidateCertificateAction(CLIAction):
+    def fetch(self, folio):
+        return validate_certificate(folio)
+
+
+class ObtainCedulaAction(CLIAction):
+    def fetch(self, nombres, paterno, materno, api_key):
+        return obtain_cedula(nombres, paterno, materno, api_key)
+
+
+class ValidateSATDataAction(CLIAction):
+    def fetch(self, nombre, rfc, regimen, cp, api_key):
+        return validate_sat_data(nombre, rfc, regimen, cp, api_key)
+
+
+class SearchCreditByNSSAction(CLIAction):
+    def fetch(self, nss):
+        return search_credit_by_nss(nss)
+
+
 
 
 def parse_args(args):
