@@ -73,7 +73,8 @@ Combine different requests
 
 
 Read a CSV with your customs fields
-+++++++++++
+++++++++++++++++++++++++++++++++++++
+
 csvcut belongs to csvkit library
 
 .. code-block:: bash
