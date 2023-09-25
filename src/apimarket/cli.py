@@ -3,7 +3,8 @@ import logging
 import sys
 import json
 
-from apimarket import __version__, fetch_curp_details, get_curp_from_details
+from apimarket import __version__
+from apimarket import *
 
 __author__ = "Carlos Eduardo Sanchez Torres (sanchezcarlosjr)"
 __copyright__ = "API MARKET"
