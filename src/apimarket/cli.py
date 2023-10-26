@@ -37,8 +37,8 @@ class CURPDetailsAction(CLIAction):
 
 
 class GetCURPFromDetailsAction(CLIAction):
-    def fetch(self, nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo, api_key):
-        return get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo, api_key)
+    def fetch(self, nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo):
+        return get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo)
 
 
 class GetRFCFromCURPAction(CLIAction):
@@ -47,8 +47,8 @@ class GetRFCFromCURPAction(CLIAction):
 
 
 class CalculateRFCAction(CLIAction):
-    def fetch(self, nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, api_key):
-        return calculate_rfc(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, api_key)
+    def fetch(self, nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento):
+        return calculate_rfc(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento)
 
 
 class LocateUMFByCPAction(CLIAction):
@@ -62,8 +62,8 @@ class LocateNSSByCURPAction(CLIAction):
 
 
 class CheckVigencyAction(CLIAction):
-    def fetch(self, nss, curp, api_key):
-        return check_vigency(nss, curp, api_key)
+    def fetch(self, nss, curp):
+        return check_vigency(nss, curp)
 
 
 class GetClinicaByCURPAction(CLIAction):
@@ -72,8 +72,8 @@ class GetClinicaByCURPAction(CLIAction):
 
 
 class GetLaborHistoryAction(CLIAction):
-    def fetch(self, curp, nss, api_key):
-        return get_labor_history(curp, nss, api_key)
+    def fetch(self, curp, nss):
+        return get_labor_history(curp, nss)
 
 
 class ValidateCedulaAction(CLIAction):
@@ -87,13 +87,13 @@ class ValidateCertificateAction(CLIAction):
 
 
 class ObtainCedulaAction(CLIAction):
-    def fetch(self, nombres, paterno, materno, api_key):
-        return obtain_cedula(nombres, paterno, materno, api_key)
+    def fetch(self, nombres, paterno, materno):
+        return obtain_cedula(nombres, paterno, materno)
 
 
 class ValidateSATDataAction(CLIAction):
-    def fetch(self, nombre, rfc, regimen, cp, api_key):
-        return validate_sat_data(nombre, rfc, regimen, cp, api_key)
+    def fetch(self, nombre, rfc, regimen, cp):
+        return validate_sat_data(nombre, rfc, regimen, cp)
 
 
 class SearchCreditByNSSAction(CLIAction):
@@ -128,24 +128,24 @@ def parse_args(args):
         metavar="CURP",
         action=CURPDetailsAction
     )
-    parser.add_argument('--get-curp-details', 
-                        nargs=9,
-                        metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO', 'CLAVE_ENTIDAD', 'SEXO', 'API_KEY'),
+    parser.add_argument('-cd', '--get-curp-details', 
+                        nargs=8,
+                        metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO', 'CLAVE_ENTIDAD', 'SEXO'),
                         action=GetCURPFromDetailsAction,
                         help='Fetch CURP based on personal details.'
                        )
-    parser.add_argument('--get-rfc-from-curp', action=GetRFCFromCURPAction, help='Fetch RFC based on CURP.')
-    parser.add_argument('--calculate-rfc', nargs=7, metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO', 'API_KEY'), action=CalculateRFCAction, help='Calculate RFC based on personal details.')
-    parser.add_argument('--locate-umf-by-cp', action=LocateUMFByCPAction, help='Locate UMF based on postal code.')
-    parser.add_argument('--locate-nss-by-curp', action=LocateNSSByCURPAction, help='Locate NSS based on CURP.')
-    parser.add_argument('--check-vigency', nargs=3, metavar=('NSS', 'CURP', 'API_KEY'), action=CheckVigencyAction, help='Check vigency of NSS and CURP.')
-    parser.add_argument('--get-clinica-by-curp', action=GetClinicaByCURPAction, help='Get clinic details by CURP.')
-    parser.add_argument('--get-labor-history', nargs=3, metavar=('CURP', 'NSS', 'API_KEY'), action=GetLaborHistoryAction, help='Get labor history by CURP and NSS.')
-    parser.add_argument('--validate-cedula', action=ValidateCedulaAction, help='Validate a cedula.')
-    parser.add_argument('--validate-certificate', action=ValidateCertificateAction, help='Validate a certificate by its folio.')
-    parser.add_argument('--obtain-cedula', nargs=4, metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'API_KEY'), action=ObtainCedulaAction, help='Obtain cedula based on personal details.')
-    parser.add_argument('--validate-sat-data', nargs=5, metavar=('NOMBRE', 'RFC', 'REGIMEN', 'CP', 'API_KEY'), action=ValidateSATDataAction, help='Validate SAT data.')
-    parser.add_argument('--search-credit-by-nss', action=SearchCreditByNSSAction, help='Search credit by NSS.')
+    parser.add_argument('-rfc', '--get-rfc-from-curp', action=GetRFCFromCURPAction, help='Fetch RFC based on CURP.')
+    parser.add_argument('-crfc', '--calculate-rfc', nargs=6, metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO'), action=CalculateRFCAction, help='Calculate RFC based on personal details.')
+    parser.add_argument('-lucp', '--locate-umf-by-cp', nargs=1, metavar=('CP'), action=LocateUMFByCPAction, help='Locate UMF based on postal code.')
+    parser.add_argument('-lnc', '--locate-nss-by-curp', nargs=1, metavar=('CURP'), action=LocateNSSByCURPAction, help='Locate NSS based on CURP.')
+    parser.add_argument('-cv', '--check-vigency', nargs=2, metavar=('NSS', 'CURP'), action=CheckVigencyAction, help='Check vigency of NSS and CURP.')
+    parser.add_argument('-cc', '--get-clinica-by-curp', nargs=1, metavar=('CURP'), action=GetClinicaByCURPAction, help='Get clinic details by CURP.')
+    parser.add_argument('-l','--get-labor-history', nargs=2, metavar=('CURP', 'NSS'), action=GetLaborHistoryAction, help='Get labor history by CURP and NSS.')
+    parser.add_argument('-vc', '--validate-cedula', action=ValidateCedulaAction, help='Validate a cedula.')
+    parser.add_argument('-vce', '--validate-certificate', action=ValidateCertificateAction, help='Validate a certificate by its folio.')
+    parser.add_argument('-ce', '--obtain-cedula', nargs=3, metavar=('NOMBRES', 'PATERNO', 'MATERNO'), action=ObtainCedulaAction, help='Obtain cedula based on personal details.')
+    parser.add_argument('--validate-sat-data', nargs=4, metavar=('NOMBRE', 'RFC', 'REGIMEN', 'CP'), action=ValidateSATDataAction, help='Validate SAT data.')
+    parser.add_argument('-cn', '--search-credit-by-nss', nargs=1, metavar=('NSS'), action=SearchCreditByNSSAction, help='Search credit by NSS.')
     parser.add_argument(
         "-v",
         "--verbose",
