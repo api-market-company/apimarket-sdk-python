@@ -95,7 +95,6 @@ def calculate_curp_verification_digit(curp17):
 
 
 def validate_curp(curp):
-    # Check if length is correct
     if len(curp) != 18:
         raise InvalidCURPError(curp, f"Invalid length {len(curp)}.")
     
@@ -144,7 +143,7 @@ def create_basic_headers(api_key=False):
     }
 
 def fetch_curp_details(curp,api_key=False):
-    valida_curp(curp)
+    validate_curp(curp)
     url = f"https://apimarket.mx/api/renapo/grupo/valida-curp?curp={curp}"
     
     headers = create_basic_headers(api_key)
