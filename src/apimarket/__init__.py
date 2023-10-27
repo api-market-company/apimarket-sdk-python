@@ -189,7 +189,7 @@ def locate_umf_by_cp(cp, api_key=False):
 
 
 def locate_nss_by_curp(curp, api_key=False):
-    valida_curp(curp)
+    validate_curp(curp)
     url = f"https://apimarket.mx/api/imss/grupo/localizar-nss?curp={curp}"
     
     headers = create_basic_headers(api_key)
@@ -199,7 +199,7 @@ def locate_nss_by_curp(curp, api_key=False):
 
 
 def check_vigency(nss, curp, api_key=False):
-    valida_curp(curp)
+    validate_curp(curp)
     validate_nss(nss)
     url = f"https://apimarket.mx/api/imss/grupo/consultar-vigencia?nss={nss}&curp={curp}"
     
