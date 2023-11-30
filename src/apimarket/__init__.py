@@ -391,5 +391,14 @@ def store_token(name, company="", description="", permissions=None, rfc="", ciec
         **dynamic_body
     }, headers=headers)
     if response.status_code != 200:
-        raise ServiceError("store tokens", name, response.json())
+        raise ServiceError("store_tokens", name, response.json())
+    return response.json()
+
+
+def retrieve_permissions(api_key=False):
+    url = f"https://apimarket.mx/api/v2/apimarket/permissions"
+    headers = create_headers(api_key)
+    response = requests.get(url, headers=headers)
+    if response.status_code != 200:
+        raise ServiceError("retrieve_permissions", "", response.json())
     return response.json()

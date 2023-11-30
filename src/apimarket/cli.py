@@ -113,6 +113,10 @@ class StoreTokenAction(CLIAction):
         return store_token(name=name, company=company, description=description, permissions=permissions.split(","), rfc=rfc, ciec=ciec)
 
 
+class PermissionDetailsAction(CLIAction):
+    def fetch(self):
+        return retrieve_permissions()
+
 def parse_args(args):
     """Parse command line parameters
 
@@ -137,6 +141,11 @@ def parse_args(args):
         type=str,
         metavar="CURP",
         action=CURPDetailsAction
+    )
+    parser.add_argument(
+        "--permissions",
+        nargs=0,
+        action=PermissionDetailsAction
     )
     parser.add_argument(
         "-st",
