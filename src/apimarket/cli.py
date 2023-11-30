@@ -4,12 +4,12 @@ import json
 from apimarket import __version__
 from apimarket import *
 
-
 __author__ = "Carlos Eduardo Sanchez Torres (sanchezcarlosjr)"
 __copyright__ = "API MARKET"
 __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)
+
 
 # ---- CLI ----
 # The functions defined in this section are wrappers around the main Python
@@ -34,7 +34,8 @@ class CURPDetailsAction(CLIAction):
 
 class GetCURPFromDetailsAction(CLIAction):
     def fetch(self, nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo):
-        return get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo)
+        return get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento,
+                                     claveEntidad, sexo)
 
 
 class GetRFCFromCURPAction(CLIAction):
@@ -107,6 +108,11 @@ class InfonavitSubAccountRetrieverAction(CLIAction):
         return get_infonavit_subaccount(nss)
 
 
+class StoreTokenAction(CLIAction):
+    def fetch(self, name, company="", description="", permissions="", rfc="", ciec=""):
+        return store_token(name=name, company=company, description=description, permissions=permissions.split(","), rfc=rfc, ciec=ciec)
+
+
 def parse_args(args):
     """Parse command line parameters
 
@@ -132,26 +138,48 @@ def parse_args(args):
         metavar="CURP",
         action=CURPDetailsAction
     )
+    parser.add_argument(
+        "-st",
+        "--store-token",
+        help="Store a new token in your account",
+        nargs=6,
+        metavar=('Nombre', 'Empresa', 'Descripcion', 'Permisos', 'RFC', 'CIEC'),
+        action=StoreTokenAction
+    )
     parser.add_argument('-cd', '--get-curp-details',
                         nargs=8,
-                        metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO', 'CLAVE_ENTIDAD', 'SEXO'),
+                        metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO',
+                                 'CLAVE_ENTIDAD', 'SEXO'),
                         action=GetCURPFromDetailsAction,
                         help='Fetch CURP based on personal details.'
-                       )
+                        )
     parser.add_argument('-rfc', '--get-rfc-from-curp', action=GetRFCFromCURPAction, help='Fetch RFC based on CURP.')
-    parser.add_argument('-crfc', '--calculate-rfc', nargs=6, metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO'), action=CalculateRFCAction, help='Calculate RFC based on personal details.')
-    parser.add_argument('-lucp', '--locate-umf-by-cp', nargs=1, metavar=('CP'), action=LocateUMFByCPAction, help='Locate UMF based on postal code.')
-    parser.add_argument('-lnc', '--locate-nss-by-curp', nargs=1, metavar=('CURP'), action=LocateNSSByCURPAction, help='Locate NSS based on CURP.')
-    parser.add_argument('-cv', '--check-vigency', nargs=2, metavar=('NSS', 'CURP'), action=CheckVigencyAction, help='Check vigency of NSS and CURP.')
-    parser.add_argument('-cc', '--get-clinica-by-curp', nargs=1, metavar=('CURP'), action=GetClinicaByCURPAction, help='Get clinic details by CURP.')
-    parser.add_argument('-l','--get-labor-history', nargs=2, metavar=('CURP', 'NSS'), action=GetLaborHistoryAction, help='Get labor history by CURP and NSS.')
+    parser.add_argument('-crfc', '--calculate-rfc', nargs=6,
+                        metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO'),
+                        action=CalculateRFCAction, help='Calculate RFC based on personal details.')
+    parser.add_argument('-lucp', '--locate-umf-by-cp', nargs=1, metavar=('CP'), action=LocateUMFByCPAction,
+                        help='Locate UMF based on postal code.')
+    parser.add_argument('-lnc', '--locate-nss-by-curp', nargs=1, metavar=('CURP'), action=LocateNSSByCURPAction,
+                        help='Locate NSS based on CURP.')
+    parser.add_argument('-cv', '--check-vigency', nargs=2, metavar=('NSS', 'CURP'), action=CheckVigencyAction,
+                        help='Check vigency of NSS and CURP.')
+    parser.add_argument('-cc', '--get-clinica-by-curp', nargs=1, metavar=('CURP'), action=GetClinicaByCURPAction,
+                        help='Get clinic details by CURP.')
+    parser.add_argument('-l', '--get-labor-history', nargs=2, metavar=('CURP', 'NSS'), action=GetLaborHistoryAction,
+                        help='Get labor history by CURP and NSS.')
     parser.add_argument('-vc', '--validate-cedula', action=ValidateCedulaAction, help='Validate a cedula.')
-    parser.add_argument('-vce', '--validate-certificate', action=ValidateCertificateAction, help='Validate a certificate by its folio.')
-    parser.add_argument('-oc', '--obtain-cedula', nargs=3, metavar=('NOMBRES', 'PATERNO', 'MATERNO'), action=ObtainCedulaAction, help='Obtain cedula based on personal details.')
-    parser.add_argument('--validate-sat-data', nargs=4, metavar=('NOMBRE', 'RFC', 'REGIMEN', 'CP'), action=ValidateSATDataAction, help='Validate SAT data.')
-    parser.add_argument('-cn', '--search-credit-by-nss', nargs=1, metavar=('NSS'), action=SearchCreditByNSSAction, help='Search credit by NSS.')
-    parser.add_argument('-fd', '--get-fiscal-data-by-rfc', nargs=1, metavar=('RFC'), action=FiscalDataRetrieverAction, help='Fetch Fiscal Data by RFC.')
-    parser.add_argument('-sa', '--get-infonavit-subaccount-by-nss', nargs=1, metavar=('NSS'), action=FiscalDataRetrieverAction, help='Fetch INFONAVIT subaccount by NSS.')
+    parser.add_argument('-vce', '--validate-certificate', action=ValidateCertificateAction,
+                        help='Validate a certificate by its folio.')
+    parser.add_argument('-oc', '--obtain-cedula', nargs=3, metavar=('NOMBRES', 'PATERNO', 'MATERNO'),
+                        action=ObtainCedulaAction, help='Obtain cedula based on personal details.')
+    parser.add_argument('--validate-sat-data', nargs=4, metavar=('NOMBRE', 'RFC', 'REGIMEN', 'CP'),
+                        action=ValidateSATDataAction, help='Validate SAT data.')
+    parser.add_argument('-cn', '--search-credit-by-nss', nargs=1, metavar=('NSS'), action=SearchCreditByNSSAction,
+                        help='Search credit by NSS.')
+    parser.add_argument('-fd', '--get-fiscal-data-by-rfc', nargs=1, metavar=('RFC'), action=FiscalDataRetrieverAction,
+                        help='Fetch Fiscal Data by RFC.')
+    parser.add_argument('-sa', '--get-infonavit-subaccount-by-nss', nargs=1, metavar=('NSS'),
+                        action=FiscalDataRetrieverAction, help='Fetch INFONAVIT subaccount by NSS.')
     parser.add_argument(
         "-v",
         "--verbose",

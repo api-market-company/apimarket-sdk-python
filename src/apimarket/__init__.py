@@ -371,3 +371,25 @@ def get_mexican_fiscal_data_with_rfc(rfc, api_key=False):
     if response.status_code != 200:
         raise ServiceError("mexican fiscal data", rfc, response.json())
     return response.json()['data']
+
+
+def store_token(name, company="", description="", permissions=None, rfc="", ciec="", api_key=False):
+    if permissions is None:
+        permissions = []
+    url = f"https://apimarket.mx/api/v2/apimarket/tokens"
+    headers = create_headers(api_key)
+    dynamic_body = {}
+    if rfc != "":
+        validate_rfc(rfc)
+        dynamic_body['rfc'] = rfc
+        dynamic_body['ciec'] = ciec
+    response = requests.post(url, json={
+        'name': name,
+        'description': description,
+        'permissions': permissions,
+        'empresa': company,
+        **dynamic_body
+    }, headers=headers)
+    if response.status_code != 200:
+        raise ServiceError("store tokens", name, response.json())
+    return response.json()
