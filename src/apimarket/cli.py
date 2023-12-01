@@ -188,7 +188,7 @@ def parse_args(args):
     parser.add_argument('-fd', '--get-fiscal-data-by-rfc', nargs=1, metavar=('RFC'), action=FiscalDataRetrieverAction,
                         help='Fetch Fiscal Data by RFC.')
     parser.add_argument('-sa', '--get-infonavit-subaccount-by-nss', nargs=1, metavar=('NSS'),
-                        action=FiscalDataRetrieverAction, help='Fetch INFONAVIT subaccount by NSS.')
+                        action=InfonavitSubAccountRetrieverAction, help='Fetch INFONAVIT subaccount by NSS.')
     parser.add_argument(
         "-v",
         "--verbose",
