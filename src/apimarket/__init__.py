@@ -4,12 +4,14 @@ import sys
 from decouple import config
 import ssl
 import httpx
+from tenacity import retry, retry_if_exception_type
 
 ssl_context = ssl.create_default_context()
 ssl_context.minimum_version = ssl.TLSVersion.TLSv1_3
 ssl_context.maximum_version = ssl.TLSVersion.TLSv1_3
 
-requests = httpx.Client(http2=True, verify=ssl_context)
+transport = httpx.HTTPTransport(retries=3)
+requests = httpx.Client(http2=True, verify=ssl_context, transport=transport)
 
 if sys.version_info[:2] >= (3, 8):
     # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
@@ -164,6 +166,8 @@ def create_headers(api_key=False):
     return {"Authorization": f"Bearer {api_key}", "Accept": "application/json", "Content-Type": "application/json"}
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def fetch_curp_details(curp, api_key=False):
     validate_curp(curp)
     url = f"https://apimarket.mx/api/renapo/grupo/valida-curp?curp={curp}"
@@ -177,6 +181,8 @@ def fetch_curp_details(curp, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo,
                           api_key=False):
     url = f"https://apimarket.mx/api/renapo/grupo/obtener-curp?nombres={nombres}&paterno={paterno}&materno={materno}&diaNacimiento={diaNacimiento}&mesNacimiento={mesNacimiento}&anoNacimiento={anoNacimiento}&claveEntidad={claveEntidad}&sexo={sexo}"
@@ -186,9 +192,12 @@ def get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimient
     response = requests.post(url, headers=headers)
     if response.status_code != 200:
         raise ServiceError("get_curp_from_details", f"{nombres} {paterno} {materno}", response.json())
-    return response.json()['data']
+
+    return response.json()['data']['curp']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def get_rfc_from_curp(curp, api_key=False):
     validate_curp(curp)
     url = f"https://apimarket.mx/api/sat/grupo/obtener-rfc?curp={curp}"
@@ -201,6 +210,8 @@ def get_rfc_from_curp(curp, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def calculate_rfc(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, api_key=False):
     url = f"https://apimarket.mx/api/sat/grupo/calcular-rfc?nombres={nombres}&paterno={paterno}&materno={materno}&diaNacimiento={diaNacimiento}&mesNacimiento={mesNacimiento}&anoNacimiento={anoNacimiento}"
 
@@ -212,6 +223,8 @@ def calculate_rfc(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNa
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def locate_umf_by_cp(cp, api_key=False):
     url = f"https://apimarket.mx/api/imss/grupo/localizar-umf?cp={cp}"
 
@@ -223,6 +236,8 @@ def locate_umf_by_cp(cp, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def locate_nss_by_curp(curp, api_key=False):
     validate_curp(curp)
     url = f"https://apimarket.mx/api/imss/grupo/localizar-nss?curp={curp}"
@@ -235,6 +250,8 @@ def locate_nss_by_curp(curp, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def check_nss_validity(nss, curp, api_key=False):
     validate_curp(curp)
     validate_nss(nss)
@@ -248,6 +265,8 @@ def check_nss_validity(nss, curp, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def get_clinica_by_curp(curp, api_key=False):
     validate_curp(curp)
     url = f"https://apimarket.mx/api/imss/grupo/con-clinica?curp={curp}"
@@ -260,6 +279,8 @@ def get_clinica_by_curp(curp, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def consult_clinica_by_curp(curp, api_key=False):
     validate_curp(curp)
     url = f"https://apimarket.mx/api/imss/grupo/con-clinica?curp={curp}"
@@ -272,6 +293,8 @@ def consult_clinica_by_curp(curp, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def get_labor_history(curp, nss, api_key=False):
     validate_curp(curp)
     validate_nss(nss)
@@ -286,6 +309,8 @@ def get_labor_history(curp, nss, api_key=False):
     return response.json()
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def validate_sep_cedula(cedula, api_key=False):
     url = f"https://apimarket.mx/api/sep/grupo/validar-cedula?cedula={cedula}"
 
@@ -297,6 +322,8 @@ def validate_sep_cedula(cedula, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def validate_sep_certificate(folio, api_key=False):
     url = f"https://apimarket.mx/api/sep/grupo/validar-certificado?folio={folio}"
 
@@ -308,6 +335,8 @@ def validate_sep_certificate(folio, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def obtain_sep_cedula(nombres, paterno, materno, api_key=False):
     url = f"https://apimarket.mx/api/sep/grupo/obtener-cedula?nombres={nombres}&paterno={paterno}&materno={materno}"
 
@@ -319,6 +348,8 @@ def obtain_sep_cedula(nombres, paterno, materno, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def validate_sat_data(nombre, rfc, regimen, cp, api_key=False):
     validate_rfc(rfc)
     url = f"https://apimarket.mx/api/sat/grupo/validar-datos?nombre={nombre}&rfc={rfc}&regimen={regimen}&cp={cp}"
@@ -331,6 +362,8 @@ def validate_sat_data(nombre, rfc, regimen, cp, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def search_credit_by_nss(nss, api_key=False):
     validate_nss(nss)
     url = f"https://apimarket.mx/api/infonavit/grupo/buscar-credito?nss={nss}"
@@ -343,6 +376,8 @@ def search_credit_by_nss(nss, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def get_infonavit_subaccount(nss, api_key=False):
     """
        Learn more on https://apimarket.mx/marketplace/obtener-subcuenta-de-vivienda
@@ -358,6 +393,8 @@ def get_infonavit_subaccount(nss, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def get_mexican_fiscal_data_with_rfc(rfc, api_key=False):
     """
        Learn more on https://apimarket.mx/marketplace/obtener-datos-fiscales
@@ -373,6 +410,8 @@ def get_mexican_fiscal_data_with_rfc(rfc, api_key=False):
     return response.json()['data']
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def store_token(name, company="", description="", permissions=None, rfc="", ciec="", api_key=False):
     if permissions is None:
         permissions = []
@@ -395,6 +434,8 @@ def store_token(name, company="", description="", permissions=None, rfc="", ciec
     return response.json()
 
 
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def retrieve_permissions(api_key=False):
     url = f"https://apimarket.mx/api/v2/apimarket/permissions"
     headers = create_headers(api_key)
