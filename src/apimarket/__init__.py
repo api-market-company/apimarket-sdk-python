@@ -113,6 +113,7 @@ def calculate_curp_verification_digit(curp17):
 
     for i in range(17):
         lngSuma += diccionario.index(curp17[i]) * (18 - i)
+        print(diccionario.index(curp17[i]))
 
     lngDigito = 10 - (lngSuma % 10)
 
@@ -130,8 +131,9 @@ def validate_curp(curp):
     if not re.match(pattern, curp):
         raise InvalidCURPError(curp, f"CURP has invalid format.")
 
-    if curp[17] != calculate_curp_verification_digit(curp[:17]):
-        raise InvalidCURPError(curp, "CURP has an invalid check digit.")
+    digit = calculate_curp_verification_digit(curp[:17])
+    if curp[17] != digit:
+        raise InvalidCURPError(curp, f"CURP has an invalid check digit. It must be {digit}.")
 
     return curp
 
@@ -161,9 +163,13 @@ class InvalidAuthenticationToken(Exception):
 
 def create_headers(api_key=False):
     api_key = config('APIMARKET_API_KEY', default=api_key)
-    if api_key == "" or api_key == False:
+    sandbox = config('APIMARKET_SANDBOX', default=False)
+    if api_key == "" or not api_key:
         raise InvalidAuthenticationToken()
-    return {"Authorization": f"Bearer {api_key}", "Accept": "application/json", "Content-Type": "application/json"}
+    headers = {"Authorization": f"Bearer {api_key}", "Accept": "application/json", "Content-Type": "application/json"}
+    if sandbox:
+        headers['x-sandbox'] = sandbox
+    return headers
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -175,6 +181,7 @@ def fetch_curp_details(curp, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
+
     if response.status_code != 200:
         raise ServiceError("fetch_curp_details", curp, response.json())
 
@@ -422,13 +429,8 @@ def store_token(name, company="", description="", permissions=None, rfc="", ciec
         validate_rfc(rfc)
         dynamic_body['rfc'] = rfc
         dynamic_body['ciec'] = ciec
-    response = requests.post(url, json={
-        'name': name,
-        'description': description,
-        'permissions': permissions,
-        'empresa': company,
-        **dynamic_body
-    }, headers=headers)
+    response = requests.post(url, json={'name': name, 'description': description, 'permissions': permissions,
+        'empresa': company, **dynamic_body}, headers=headers)
     if response.status_code != 200:
         raise ServiceError("store_tokens", name, response.json())
     return response.json()
