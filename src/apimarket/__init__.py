@@ -92,8 +92,8 @@ def validate_rfc(rfc):
 
 
 def calculate_nss_verification_digit(nss):
-    if len(nss) >= 11:
-        return int(nss[10])
+    if len(nss) < 10:
+        raise InvalidNSSError(nss, "Invalid length.")
 
     acc = 0
     for i in range(10):
@@ -113,7 +113,6 @@ def calculate_curp_verification_digit(curp17):
 
     for i in range(17):
         lngSuma += diccionario.index(curp17[i]) * (18 - i)
-        print(diccionario.index(curp17[i]))
 
     lngDigito = 10 - (lngSuma % 10)
 
@@ -181,11 +180,12 @@ def fetch_curp_details(curp, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
+    
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("fetch_curp_details", curp, body)
 
-    if response.status_code != 200:
-        raise ServiceError("fetch_curp_details", curp, response.json())
-
-    return response.json()['data']
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -197,10 +197,11 @@ def get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimient
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("get_curp_from_details", f"{nombres} {paterno} {materno}", response.json())
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("get_curp_from_details", f"{nombres} {paterno} {materno}", body)
 
-    return response.json()['data']['curp']
+    return body['data']['curp']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -212,9 +213,10 @@ def get_rfc_from_curp(curp, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("get_rfc_from_curp", f"{curp}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("get_rfc_from_curp", f"{curp}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -225,9 +227,10 @@ def calculate_rfc(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNa
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("calculate_rfc", f"{nombres} {paterno} {materno}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("calculate_rfc", f"{nombres} {paterno} {materno}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -238,9 +241,10 @@ def locate_umf_by_cp(cp, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("locate_umf_by_cp", f"{cp}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("locate_umf_by_cp", f"{cp}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -252,9 +256,10 @@ def locate_nss_by_curp(curp, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("locate_nss_by_curp", f"{curp}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("locate_nss_by_curp", f"{curp}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -267,9 +272,10 @@ def check_nss_validity(nss, curp, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("locate_nss_by_curp", f"{curp}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("locate_nss_by_curp", f"{curp}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -281,9 +287,10 @@ def get_clinica_by_curp(curp, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("get_clinica_by_curp", f"{curp}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("get_clinica_by_curp", f"{curp}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -295,9 +302,10 @@ def consult_clinica_by_curp(curp, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("consult_clinica_by_curp", f"{curp}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("consult_clinica_by_curp", f"{curp}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -310,10 +318,11 @@ def get_labor_history(curp, nss, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("get_labor_history", f"{curp} {nss}", response.json())
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("get_labor_history", f"{curp} {nss}", body)
 
-    return response.json()
+    return body
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -324,9 +333,10 @@ def validate_sep_cedula(cedula, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("validate_cedula", f"Cedula: {cedula}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("validate_cedula", f"Cedula: {cedula}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -337,9 +347,10 @@ def validate_sep_certificate(folio, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("validate_certificate", f"Folio: {folio}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("validate_certificate", f"Folio: {folio}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -350,9 +361,10 @@ def obtain_sep_cedula(nombres, paterno, materno, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("obtain_sep_cedula", f"{nombres} {paterno} {materno}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("obtain_sep_cedula", f"{nombres} {paterno} {materno}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -364,9 +376,10 @@ def validate_sat_data(nombre, rfc, regimen, cp, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("validate_sat_data", f"{nombre} {rfc}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("validate_sat_data", f"{nombre} {rfc}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -378,9 +391,10 @@ def search_credit_by_nss(nss, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("search_credit_by_nss", f"{nss}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("search_credit_by_nss", f"{nss}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -395,9 +409,10 @@ def get_infonavit_subaccount(nss, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("get_infonavit_subaccount", f"{nss}", response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("get_infonavit_subaccount", f"{nss}", body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -412,9 +427,10 @@ def get_mexican_fiscal_data_with_rfc(rfc, api_key=False):
     headers = create_headers(api_key)
 
     response = requests.post(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("mexican fiscal data", rfc, response.json())
-    return response.json()['data']
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("mexican fiscal data", rfc, body)
+    return body['data']
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -431,9 +447,10 @@ def store_token(name, company="", description="", permissions=None, rfc="", ciec
         dynamic_body['ciec'] = ciec
     response = requests.post(url, json={'name': name, 'description': description, 'permissions': permissions,
         'empresa': company, **dynamic_body}, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("store_tokens", name, response.json())
-    return response.json()
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("store_tokens", name, body)
+    return body
 
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
@@ -442,6 +459,7 @@ def retrieve_permissions(api_key=False):
     url = f"https://apimarket.mx/api/v2/apimarket/permissions"
     headers = create_headers(api_key)
     response = requests.get(url, headers=headers)
-    if response.status_code != 200:
-        raise ServiceError("retrieve_permissions", "", response.json())
-    return response.json()
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("retrieve_permissions", "", body)
+    return body
