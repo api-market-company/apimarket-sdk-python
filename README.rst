@@ -98,7 +98,7 @@ Más información en https://apimarket.mx/marketplace/valida-curp
 Dudas y opiniones
 ----
 
-Corre
+Correo
 ++++++++++++++++++++++++++++++++++++
 
 Mediante correo electrónico: abdiel@apimarket.mx
