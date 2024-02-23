@@ -39,7 +39,7 @@ There are three different ways to set the API key: you can set the API key as an
 
 Python
 -------
-You can consult the full list on `Python Docs`_.
+You can consult the full list on Python Docs.
 
 Fetch CURP details
 ++++++++++++++++++
@@ -48,12 +48,12 @@ Fetch CURP details
 
    import apimarket
    # Also it is possible apimarket.fetch_curp_details("LOOA531113HTCPBN07", api_key="")
-   result = apimarket.fetch_curp_details("LOOA531113HTCPBN07") 
+   result = apimarket.fetch_curp_details("LOOA531113HTCPBN07")
    print(result)
 
 CLI
 ----
-You can consult the full list on `CLI Docs`_.
+You can consult the full list on CLI Docs.
 
 Fetch CURP details
 +++++++++++++++++++
