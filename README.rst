@@ -84,11 +84,23 @@ csvcut belongs to csvkit library
 
 .. _pyscaffold-notes:
 
-Note
+
+Servicios
 ----
 
-This project has been set up using PyScaffold 4.5. For details and usage information on PyScaffold see https://pyscaffold.org/.
+Valida CURP API
+++++++++++++++++++++++++++++++++++++
+
+Valida CURP API, es una API REST para la obtención y validación de los registros de nacimiento relacionados a la Clave Única de Registro de Población (CURP) en el Registro Nacional de Población (RENAPO) localizados en México en formato JSON. Este endpoint no usa un algoritmo, sino que consulta las fuentes oficiales. Este servicio cumple con la normativa de nuestra parte, te recomendamos leer nuestros nuestros términos y condiciones.
+Más información en https://apimarket.mx/marketplace/valida-curp
 
 
-.. _Python Docs: https://github.com/api-market-company/apimarket-sdk-python/blob/main/src/apimarket/__init__.py
-.. _CLI Docs: https://github.com/api-market-company/apimarket-sdk-python/blob/main/src/apimarket/cli.py
+Dudas y opiniones
+----
+
+Correo
+++++++++++++++++++++++++++++++++++++
+
+Mediante correo electrónico: abdiel@apimarket.mx
+WhatsApp: https://api.whatsapp.com/message/CEUT72XQ5FKGP1
+
