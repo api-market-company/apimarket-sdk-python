@@ -86,7 +86,7 @@ csvcut belongs to csvkit library
 
 
 Servicios
-----------
+-----------
 
 Valida CURP API
 ++++++++++++++++++++++++++++++++++++
@@ -96,7 +96,7 @@ Más información en https://apimarket.mx/marketplace/valida-curp
 
 
 Dudas y opiniones
-----
+-------------------
 
 Correo
 ++++++++++++++++++++++++++++++++++++
