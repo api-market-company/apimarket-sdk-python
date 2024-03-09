@@ -1,8 +1,9 @@
 import argparse
-import logging
 import json
-from apimarket import __version__
+import logging
+
 from apimarket import *
+from apimarket import __version__
 
 __author__ = "Carlos Eduardo Sanchez Torres (sanchezcarlosjr)"
 __copyright__ = "API MARKET"
@@ -110,12 +111,14 @@ class InfonavitSubAccountRetrieverAction(CLIAction):
 
 class StoreTokenAction(CLIAction):
     def fetch(self, name, company="", description="", permissions="", rfc="", ciec=""):
-        return store_token(name=name, company=company, description=description, permissions=permissions.split(","), rfc=rfc, ciec=ciec)
+        return store_token(name=name, company=company, description=description, permissions=permissions.split(","),
+                           rfc=rfc, ciec=ciec)
 
 
 class PermissionDetailsAction(CLIAction):
     def fetch(self):
         return retrieve_permissions()
+
 
 def parse_args(args):
     """Parse command line parameters
@@ -128,43 +131,18 @@ def parse_args(args):
       :obj:`argparse.Namespace`: command line parameters namespace
     """
     parser = argparse.ArgumentParser(description="API Market Python Open Source Development")
-    parser.add_argument(
-        "--version",
-        action="version",
-        version=f"apimarket {__version__}",
-    )
-    parser.add_argument(
-        "-c",
-        "--curp",
-        dest="curp",
-        help="Write a valid CURP. For instance, LOOA531113HTCPBN07",
-        type=str,
-        metavar="CURP",
-        action=CURPDetailsAction
-    )
-    parser.add_argument(
-        "--permissions",
-        nargs=0,
-        action=PermissionDetailsAction
-    )
-    parser.add_argument(
-        "-st",
-        "--store-token",
-        help="Store a new token in your account",
-        nargs=6,
-        metavar=('Nombre', 'Empresa', 'Descripcion', 'Permisos', 'RFC', 'CIEC'),
-        action=StoreTokenAction
-    )
-    parser.add_argument('-cd', '--get-curp-details',
-                        nargs=8,
-                        metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO',
-                                 'CLAVE_ENTIDAD', 'SEXO'),
-                        action=GetCURPFromDetailsAction,
-                        help='Fetch CURP based on personal details.'
-                        )
+    parser.add_argument("--version", action="version", version=f"apimarket {__version__}", )
+    parser.add_argument("-c", "--curp", dest="curp", help="Write a valid CURP. For instance, LOOA531113HTCPBN07",
+        type=str, metavar="CURP", action=CURPDetailsAction)
+    parser.add_argument("--permissions", nargs=0, action=PermissionDetailsAction)
+    parser.add_argument("-st", "--store-token", help="Store a new token in your account", nargs=6,
+        metavar=('Nombre', 'Empresa', 'Descripcion', 'Permisos', 'RFC', 'CIEC'), action=StoreTokenAction)
+    parser.add_argument('-cd', '--get-curp-details', nargs=8, metavar=(
+    'NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO', 'CLAVE_ENTIDAD', 'SEXO'),
+                        action=GetCURPFromDetailsAction, help='Fetch CURP based on personal details.')
     parser.add_argument('-rfc', '--get-rfc-from-curp', action=GetRFCFromCURPAction, help='Fetch RFC based on CURP.')
     parser.add_argument('-crfc', '--calculate-rfc', nargs=6,
-                        metavar=('NOMBRES', 'PATERNO', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO'),
+                        metavar=('rfc', 'password', 'MATERNO', 'DIA_NACIMIENTO', 'MES_NACIMIENTO', 'ANO_NACIMIENTO'),
                         action=CalculateRFCAction, help='Calculate RFC based on personal details.')
     parser.add_argument('-lucp', '--locate-umf-by-cp', nargs=1, metavar=('CP'), action=LocateUMFByCPAction,
                         help='Locate UMF based on postal code.')
@@ -189,22 +167,10 @@ def parse_args(args):
                         help='Fetch Fiscal Data by RFC.')
     parser.add_argument('-sa', '--get-infonavit-subaccount-by-nss', nargs=1, metavar=('NSS'),
                         action=InfonavitSubAccountRetrieverAction, help='Fetch INFONAVIT subaccount by NSS.')
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        dest="loglevel",
-        help="set loglevel to INFO",
-        action="store_const",
-        const=logging.INFO,
-    )
-    parser.add_argument(
-        "-vv",
-        "--very-verbose",
-        dest="loglevel",
-        help="set loglevel to DEBUG",
-        action="store_const",
-        const=logging.DEBUG,
-    )
+    parser.add_argument("-v", "--verbose", dest="loglevel", help="set loglevel to INFO", action="store_const",
+        const=logging.INFO, )
+    parser.add_argument("-vv", "--very-verbose", dest="loglevel", help="set loglevel to DEBUG", action="store_const",
+        const=logging.DEBUG, )
     return parser.parse_args(args)
 
 
@@ -215,9 +181,7 @@ def setup_logging(loglevel):
       loglevel (int): minimum loglevel for emitting messages
     """
     logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-    logging.basicConfig(
-        level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
-    )
+    logging.basicConfig(level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S")
 
 
 def main(args):

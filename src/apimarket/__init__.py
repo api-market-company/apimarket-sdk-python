@@ -414,6 +414,30 @@ def search_credit_by_nss(nss, api_key=False):
 
 @retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
     httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
+def verify_sat_signature(rfc, password, certificate, privateKey,  api_key=False):
+    validate_rfc(rfc)
+    url = f"https://apimarket.mx/api/sat/grupo/verificar-firma-electronica"
+
+    headers = create_headers(api_key)
+
+    files = {
+        'userId': rfc,
+        'password': password,
+        'certificate': open(certificate, 'rb'),
+        'privateKey': open(privateKey, 'rb')
+    }
+
+    response = requests.post(url, headers=headers, extensions={"force_cache": True}, files=files)
+
+    body = response.json()
+    if response.status_code != 200 or 'data' not in body:
+        raise ServiceError("verify_sat_signature", f"{rfc}", body)
+    return body['message']
+
+
+
+@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
+    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
 def get_infonavit_subaccount(nss, api_key=False):
     """
        Learn more on https://apimarket.mx/marketplace/obtener-subcuenta-de-vivienda
