@@ -1,6 +1,8 @@
 from __future__ import annotations
 import datetime
 from dataclasses import dataclass, field
+
+import dateparser
 from kiota_abstractions.serialization import AdditionalDataHolder, Parsable, ParseNode, SerializationWriter
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 
@@ -44,7 +46,7 @@ class ObtenerCurpPostResponse_data(AdditionalDataHolder, Parsable):
             "apellidoMaterno": lambda n : setattr(self, 'apellido_materno', n.get_str_value()),
             "apellidoPaterno": lambda n : setattr(self, 'apellido_paterno', n.get_str_value()),
             "curp": lambda n : setattr(self, 'curp', n.get_str_value()),
-            "fechaNacimiento": lambda n : setattr(self, 'fecha_nacimiento', n.get_date_value()),
+            "fechaNacimiento": lambda n : setattr(self, 'fecha_nacimiento', dateparser.parse(n.get_str_value())),
             "mensaje": lambda n : setattr(self, 'mensaje', n.get_str_value()),
             "nombres": lambda n : setattr(self, 'nombres', n.get_str_value()),
             "sexo": lambda n : setattr(self, 'sexo', n.get_str_value()),

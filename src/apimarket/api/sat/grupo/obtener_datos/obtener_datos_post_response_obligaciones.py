@@ -1,6 +1,8 @@
 from __future__ import annotations
 import datetime
 from dataclasses import dataclass, field
+
+import dateparser
 from kiota_abstractions.serialization import AdditionalDataHolder, Parsable, ParseNode, SerializationWriter
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 
@@ -53,12 +55,12 @@ class ObtenerDatosPostResponse_obligaciones(AdditionalDataHolder, Parsable):
             "cvePago": lambda n : setattr(self, 'cve_pago', n.get_str_value()),
             "dobligLc": lambda n : setattr(self, 'doblig_lc', n.get_str_value()),
             "dobligacion": lambda n : setattr(self, 'dobligacion', n.get_str_value()),
-            "faltaOblig": lambda n : setattr(self, 'falta_oblig', n.get_date_value()),
+            "faltaOblig": lambda n : setattr(self, 'falta_oblig', dateparser.parse(n.get_str_value())),
             "fbajaOblig": lambda n : setattr(self, 'fbaja_oblig', n.get_str_value()),
-            "fefecAOblig": lambda n : setattr(self, 'fefec_a_oblig', n.get_date_value()),
+            "fefecAOblig": lambda n : setattr(self, 'fefec_a_oblig', dateparser.parse(n.get_str_value())),
             "fefecBOblig": lambda n : setattr(self, 'fefec_b_oblig', n.get_str_value()),
             "ffinLegal": lambda n : setattr(self, 'ffin_legal', n.get_str_value()),
-            "finiLegal": lambda n : setattr(self, 'fini_legal', n.get_date_value()),
+            "finiLegal": lambda n : setattr(self, 'fini_legal', dateparser.parse(n.get_str_value())),
             "tcontribucion": lambda n : setattr(self, 'tcontribucion', n.get_str_value()),
         }
         return fields

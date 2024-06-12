@@ -1,6 +1,8 @@
 from __future__ import annotations
 import datetime
 from dataclasses import dataclass, field
+
+import dateparser
 from kiota_abstractions.serialization import AdditionalDataHolder, Parsable, ParseNode, SerializationWriter
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 
@@ -41,9 +43,9 @@ class ObtenerDatosPostResponse_regimenes(AdditionalDataHolder, Parsable):
         fields: Dict[str, Callable[[Any], None]] = {
             "cregimen": lambda n : setattr(self, 'cregimen', n.get_str_value()),
             "dregimen": lambda n : setattr(self, 'dregimen', n.get_str_value()),
-            "faltaReg": lambda n : setattr(self, 'falta_reg', n.get_date_value()),
+            "faltaReg": lambda n : setattr(self, 'falta_reg', dateparser.parse(n.get_str_value())),
             "fbajaReg": lambda n : setattr(self, 'fbaja_reg', n.get_str_value()),
-            "fefecAReg": lambda n : setattr(self, 'fefec_a_reg', n.get_date_value()),
+            "fefecAReg": lambda n : setattr(self, 'fefec_a_reg', dateparser.parse(n.get_str_value())),
             "fefecBReg": lambda n : setattr(self, 'fefec_b_reg', n.get_str_value()),
         }
         return fields

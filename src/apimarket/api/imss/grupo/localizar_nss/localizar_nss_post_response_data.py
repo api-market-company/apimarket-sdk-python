@@ -1,6 +1,8 @@
 from __future__ import annotations
 import datetime
 from dataclasses import dataclass, field
+
+import dateparser
 from kiota_abstractions.serialization import AdditionalDataHolder, Parsable, ParseNode, SerializationWriter
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 
@@ -50,9 +52,9 @@ class LocalizarNssPostResponse_data(AdditionalDataHolder, Parsable):
             "arco": lambda n : setattr(self, 'arco', n.get_str_value()),
             "cveCurp": lambda n : setattr(self, 'cve_curp', n.get_str_value()),
             "desEmail": lambda n : setattr(self, 'des_email', n.get_str_value()),
-            "fecAlta": lambda n : setattr(self, 'fec_alta', n.get_date_value()),
-            "fecBaja": lambda n : setattr(self, 'fec_baja', n.get_date_value()),
-            "fecNacimiento": lambda n : setattr(self, 'fec_nacimiento', n.get_date_value()),
+            "fecAlta": lambda n : setattr(self, 'fec_alta', dateparser.parse(n.get_str_value())),
+            "fecBaja": lambda n : setattr(self, 'fec_baja', dateparser.parse(n.get_str_value())),
+            "fecNacimiento": lambda n : setattr(self, 'fec_nacimiento', dateparser.parse(n.get_str_value())),
             "nomNombre": lambda n : setattr(self, 'nom_nombre', n.get_str_value()),
             "numNss": lambda n : setattr(self, 'num_nss', n.get_str_value()),
             "refApellidoMaterno": lambda n : setattr(self, 'ref_apellido_materno', n.get_str_value()),
