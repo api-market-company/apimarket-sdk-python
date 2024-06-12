@@ -47,7 +47,7 @@ Fetch CURP details
 .. code-block:: python3
 
    import apimarket
-   # Also it is possible apimarket.fetch_curp_details("LOOA531113HTCPBN07", api_key="")
+   # You can configure the calls with apimarket.assemble(api_key: str, async_client:boolean=False, headers:dict[str,str], sandbox=False)
    result = apimarket.fetch_curp_details("LOOA531113HTCPBN07")
    print(result)
 
