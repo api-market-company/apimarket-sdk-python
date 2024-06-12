@@ -50,6 +50,7 @@ def assemble(api_key="", headers=None, sandbox=False, async_client=False):
         headers = {}
     collection = HeadersCollection()
     collection.try_add("Accept", "application/json")
+    sandbox = config("APIMARKET_SANDBOX", default=sandbox, cast=bool)
     if sandbox:
         collection.add("x-sandbox", "true")
     for k, v in headers.items():
