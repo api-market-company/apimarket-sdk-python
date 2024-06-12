@@ -1,32 +1,71 @@
-import re
+import asyncio
+import inspect
 import sys
+from asyncio import Future
+from dataclasses import make_dataclass
+from typing import Union
 
 from decouple import config
-import ssl
-import httpx
-from tenacity import retry, retry_if_exception_type
-import hishel
+from kink import inject, di
+from kiota_abstractions.authentication import AccessTokenProvider, AllowedHostsValidator, \
+    BaseBearerTokenAuthenticationProvider
+from kiota_abstractions.base_request_configuration import RequestConfiguration
+from kiota_abstractions.headers_collection import HeadersCollection
+from kiota_abstractions.request_adapter import RequestAdapter
+from kiota_http.httpx_request_adapter import HttpxRequestAdapter
+from kiota_serialization_json.json_serialization_writer import JsonSerializationWriter
 
-controller = hishel.Controller(
-    cacheable_methods=["GET", "POST"],
-    cacheable_status_codes=[200],
-    allow_stale=True,
-    always_revalidate=True
-)
+from apimarket.api.imss.grupo.historial_laboral.historial_laboral_post_response import HistorialLaboralPostResponse
+from apimarket.api.infonavit.grupo.buscar_credito.buscar_credito_post_response import BuscarCreditoPostResponse
+from apimarket.api.infonavit.grupo.obtener_cuenta.obtener_cuenta_post_response import ObtenerCuentaPostResponse
+from apimarket.api.renapo.grupo.obtener_curp.obtener_curp_post_response import ObtenerCurpPostResponse
+from apimarket.api.sat.grupo.calcular_rfc.calcular_rfc_post_response import CalcularRfcPostResponse
+from apimarket.api.sat.grupo.obtener_datos.obtener_datos_post_response import ObtenerDatosPostResponse
+from apimarket.api.sat.grupo.obtener_rfc.obtener_rfc_post_response import ObtenerRfcPostResponse
+from apimarket.api.sat.grupo.validar_datos.validar_datos_post_response import ValidarDatosPostResponse
+from apimarket.api.sep.grupo.obtener_cedula.obtener_cedula_post_response import ObtenerCedulaPostResponse
+from apimarket.api.sep.grupo.validar_cedula.validar_cedula_post_response import ValidarCedulaPostResponse
+from apimarket.api.sep.grupo.validar_certificado.validar_certificado_post_response import ValidarCertificadoPostResponse
+from apimarket.api_market_client import ApiMarketClient
+from apimarket.models.curp_a_p_i_response import CurpAPIResponse
+from apimarket.models.historial_data import HistorialData
+from apimarket.validations import validate_curp, validate_rfc, validate_nss
 
-ssl_context = ssl.create_default_context()
-ssl_context.minimum_version = ssl.TLSVersion.TLSv1_3
-ssl_context.maximum_version = ssl.TLSVersion.TLSv1_3
 
-transport = httpx.HTTPTransport(retries=3)
-storage = hishel.FileStorage()
+class EnvironmentTokenProvider(AccessTokenProvider):
+    def __init__(self, token=""):
+        self.token = token
 
-requests = hishel.CacheClient(controller=controller,
-                              http2=True,
-                              verify=ssl_context,
-                              transport=transport,
-                              storage=storage
-                              )
+    async def get_authorization_token(self, uri: str, additional_authentication_context=None) -> str:
+        if additional_authentication_context is None:
+            additional_authentication_context = {}
+        return self.token
+
+    def get_allowed_hosts_validator(self) -> AllowedHostsValidator:
+        pass
+
+
+def assemble(api_key="", headers=None, sandbox=False, async_client=False):
+    if headers is None:
+        headers = {}
+    collection = HeadersCollection()
+    collection.try_add("Accept", "application/json")
+    if sandbox:
+        collection.add("x-sandbox", "true")
+    for k, v in headers.items():
+        collection.add(k, v)
+    di["async_client"] = async_client
+    di["API_MARKET_API_KEY"] = config("APIMARKET_API_KEY", default=api_key)
+    di[EnvironmentTokenProvider] = lambda di: EnvironmentTokenProvider(di["API_MARKET_API_KEY"])
+    di[AccessTokenProvider] = lambda di: BaseBearerTokenAuthenticationProvider(di[EnvironmentTokenProvider])
+    di[RequestAdapter] = lambda di: HttpxRequestAdapter(di[AccessTokenProvider])
+    di[ApiMarketClient] = lambda di: ApiMarketClient(di[RequestAdapter])
+    di[HeadersCollection] = collection
+    di[RequestConfiguration] = lambda di: RequestConfiguration(headers=di[HeadersCollection])
+    return di
+
+
+assemble()
 
 if sys.version_info[:2] >= (3, 8):
     # TODO: Import directly (no need for conditional) when `python_requires = >= 3.8`
@@ -44,461 +83,206 @@ finally:
     del version, PackageNotFoundError
 
 
-class ServiceError(Exception):
-    def __init__(self, service, params, message):
-        self.params = params
-        self.message = message
-        self.service = service
-        super().__init__(self.message)
-
-    def __str__(self):
-        return f"ServiceError({self.service}): {self.params} - {self.message}"
+def make_query_params(params: dict):
+    return make_dataclass('QueryParams', [(key, str) for key in params.keys()])(**params)
 
 
-class InvalidCURPError(Exception):
-    """Exception raised for invalid CURP."""
-
-    def __init__(self, curp, message):
-        self.curp = curp
-        self.message = message
-        super().__init__(self.message)
-
-    def __str__(self):
-        return f"CURP: {self.curp} - {self.message}"
+def get_an_event_loop():
+    try:
+        return asyncio.get_event_loop()
+    except RuntimeError:
+        return asyncio.new_event_loop()
 
 
-class InvalidNSSError(Exception):
-    """Exception raised for invalid NSS."""
+def choice_process_scheduler(func):
+    def wrapper(*args, **kwargs):
+        if di["async_client"]:
+            return func(*args, **kwargs)
+        loop = get_an_event_loop()
+        return loop.run_until_complete(func(*args, **kwargs))
 
-    def __init__(self, nss, message):
-        self.nss = nss
-        self.message = message
-        super().__init__(self.message)
-
-    def __str__(self):
-        return f"NSS: {self.nss} - {self.message}"
+    return wrapper
 
 
-class InvalidRFCError(Exception):
-    """Exception raised for invalid RFC."""
+def format_api(func):
+    def wrapper(*args, **kwargs):
+        # Get the function's argument names and default values
+        func_signature = inspect.signature(func)
+        bound_arguments = func_signature.bind(*args, **kwargs)
+        bound_arguments.apply_defaults()
 
-    def __init__(self, rfc, message):
-        self.rfc = rfc
-        self.message = message
-        super().__init__(self.message)
+        # Extract the arguments as a dictionary
+        arguments = bound_arguments.arguments
 
-    def __str__(self):
-        return f"RFC: {self.rfc} - {self.message}"
+        api, configuration = func(*args, **kwargs)
 
+        configuration.query_parameters = make_query_params(arguments)
 
-def validate_rfc(rfc):
-    """Validate the format of an RFC."""
+        return choice_process_scheduler(lambda: api(request_configuration=configuration))()
 
-    # RFC for individuals
-    pattern_individual = r'^[A-Z]{4}[0-9]{6}[A-Z0-9]{3}$'
-
-    # RFC for companies
-    pattern_company = r'^[A-Z]{3}[0-9]{6}[A-Z0-9]{3}$'
-
-    if not (re.match(pattern_individual, rfc) or re.match(pattern_company, rfc)):
-        raise InvalidRFCError(rfc, "Invalid RFC format.")
-
-    return rfc
+    return wrapper
 
 
-def calculate_nss_verification_digit(nss):
-    if len(nss) < 10:
-        raise InvalidNSSError(nss, "Invalid length.")
-
-    acc = 0
-    for i in range(10):
-        if i & 1:
-            x = int(nss[i]) * 2
-            acc += x % 10 + (1 if x >= 10 else 0)
-        else:
-            acc += int(nss[i])
-
-    return str((10 - acc % 10) % 10)
+def to_json(response):
+    json_serialization_writer = JsonSerializationWriter()
+    response.serialize(json_serialization_writer)
+    content = json_serialization_writer.get_serialized_content()
+    return content.decode("utf-8")
 
 
-def calculate_curp_verification_digit(curp17):
-    """Calculate the check digit for a CURP."""
-    diccionario = "0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
-    lngSuma = 0.0
-
-    for i in range(17):
-        lngSuma += diccionario.index(curp17[i]) * (18 - i)
-
-    lngDigito = 10 - (lngSuma % 10)
-
-    if lngDigito == 10:
-        return '0'
-    return str(int(lngDigito))
-
-
-def validate_curp(curp):
-    if len(curp) != 18:
-        raise InvalidCURPError(curp, f"Invalid length {len(curp)}.")
-
-    pattern = r'^[A-Z][AEIXOU][A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HMX](AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z][0-9]$'
-
-    if not re.match(pattern, curp):
-        raise InvalidCURPError(curp, f"CURP has invalid format.")
-
-    digit = calculate_curp_verification_digit(curp[:17])
-    if curp[17] != digit:
-        raise InvalidCURPError(curp, f"CURP has an invalid check digit. It must be {digit}.")
-
-    return curp
-
-
-def validate_nss(nss):
-    """Validate the format and check digit of an NSS."""
-    # Check the length
-    if len(nss) != 11:
-        raise InvalidNSSError(nss, "Invalid length.")
-
-    # Check if all characters are digits
-    if not nss.isdigit():
-        raise InvalidNSSError(nss, "Invalid format: NSS should only contain digits.")
-
-    # Validate check digit
-    if nss[10] != calculate_nss_verification_digit(nss[:10]):
-        raise InvalidNSSError(nss, "Invalid check digit.")
-
-    return nss
-
-
-class InvalidAuthenticationToken(Exception):
-    def __init__(self):
-        self.message = "Please check whether the token has been set. You must either call the function with your token or set an environment variable."
-        super().__init__(self.message)
-
-
-def create_headers(api_key=False):
-    api_key = config('APIMARKET_API_KEY', default=api_key)
-    sandbox = config('APIMARKET_SANDBOX', default=False)
-    if api_key == "" or not api_key:
-        raise InvalidAuthenticationToken()
-    headers = {"Authorization": f"Bearer {api_key}", "Accept": "application/json", "Content-Type": "application/json"}
-    if sandbox:
-        headers['x-sandbox'] = sandbox
-    return headers
-
-
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def fetch_curp_details(curp, api_key=False):
+@format_api
+@inject()
+def fetch_curp_details(curp: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None) -> Union[
+    Future[CurpAPIResponse], CurpAPIResponse]:
     validate_curp(curp)
-    url = f"https://apimarket.mx/api/renapo/grupo/valida-curp?curp={curp}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("fetch_curp_details", curp, body)
-
-    return body['data']
+    return client.api.renapo.grupo.valida_curp.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, claveEntidad, sexo,
-                          api_key=False):
-    url = f"https://apimarket.mx/api/renapo/grupo/obtener-curp?nombres={nombres}&paterno={paterno}&materno={materno}&diaNacimiento={diaNacimiento}&mesNacimiento={mesNacimiento}&anoNacimiento={anoNacimiento}&claveEntidad={claveEntidad}&sexo={sexo}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("get_curp_from_details", f"{nombres} {paterno} {materno}", body)
-
-    return body['data']['curp']
+@format_api
+@inject()
+def get_curp_from_details(nombres: str, paterno: str, materno: str, diaNacimiento: int, mesNacimiento: int,
+                          anoNacimiento: int, claveEntidad: str, sexo: str, client: ApiMarketClient = None,
+                          configuration: RequestConfiguration = None) -> Union[
+    Future[ObtenerCurpPostResponse], ObtenerCurpPostResponse]:
+    return client.api.renapo.grupo.obtener_curp.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def get_rfc_from_curp(curp, api_key=False):
+@format_api
+@inject()
+def get_rfc_from_curp(curp: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None)\
+        -> Union[Future[ObtenerRfcPostResponse], ObtenerRfcPostResponse]:
     validate_curp(curp)
-    url = f"https://apimarket.mx/api/sat/grupo/obtener-rfc?curp={curp}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("get_rfc_from_curp", f"{curp}", body)
-    return body['data']
+    return client.api.sat.grupo.obtener_rfc.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def calculate_rfc(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNacimiento, api_key=False):
-    url = f"https://apimarket.mx/api/sat/grupo/calcular-rfc?nombres={nombres}&paterno={paterno}&materno={materno}&diaNacimiento={diaNacimiento}&mesNacimiento={mesNacimiento}&anoNacimiento={anoNacimiento}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("calculate_rfc", f"{nombres} {paterno} {materno}", body)
-    return body['data']
+@format_api
+@inject()
+def calculate_rfc(nombres: str, paterno: str, materno: str, diaNacimiento: int, mesNacimiento: int, anoNacimiento: int,
+                  client: ApiMarketClient = None, configuration: RequestConfiguration = None)\
+        -> Union[Future[CalcularRfcPostResponse], CalcularRfcPostResponse]:
+    return client.api.sat.grupo.calcular_rfc.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def locate_umf_by_cp(cp, api_key=False):
-    url = f"https://apimarket.mx/api/imss/grupo/localizar-umf?cp={cp}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("locate_umf_by_cp", f"{cp}", body)
-    return body['data']
+@format_api
+@inject()
+def locate_umf_by_cp(cp: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None):
+    return client.api.imss.grupo.localizar_umf.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def locate_nss_by_curp(curp, api_key=False):
+@format_api
+@inject()
+def locate_nss_by_curp(curp: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None):
     validate_curp(curp)
-    url = f"https://apimarket.mx/api/imss/grupo/localizar-nss?curp={curp}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("locate_nss_by_curp", f"{curp}", body)
-    return body['data']
+    return client.api.imss.grupo.localizar_nss.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def check_nss_validity(nss, curp, api_key=False):
+@format_api
+@inject()
+def check_nss_validity(nss: str, curp: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None):
     validate_curp(curp)
     validate_nss(nss)
-    url = f"https://apimarket.mx/api/imss/grupo/consultar-vigencia?nss={nss}&curp={curp}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("locate_nss_by_curp", f"{curp}", body)
-    return body['data']
+    return client.api.imss.grupo.consultar_vigencia.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def get_clinica_by_curp(curp, api_key=False):
+@format_api
+@inject()
+def get_clinica_by_curp(curp: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None):
     validate_curp(curp)
-    url = f"https://apimarket.mx/api/imss/grupo/con-clinica?curp={curp}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("get_clinica_by_curp", f"{curp}", body)
-    return body['data']
+    return client.api.imss.grupo.con_clinica.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def consult_clinica_by_curp(curp, api_key=False):
+@format_api
+@inject()
+def consult_clinica_by_curp(curp: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None):
     validate_curp(curp)
-    url = f"https://apimarket.mx/api/imss/grupo/con-clinica?curp={curp}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("consult_clinica_by_curp", f"{curp}", body)
-    return body['data']
+    return client.api.imss.grupo.con_clinica.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def get_labor_history(curp, nss, api_key=False):
+@format_api
+@inject()
+def get_labor_history(curp: str, nss: str, client: ApiMarketClient = None,
+                      configuration: RequestConfiguration = None) -> Union[Future[HistorialData], HistorialData]:
     validate_curp(curp)
     validate_nss(nss)
-    url = f"https://apimarket.mx/api/imss/grupo/historial-laboral?curp={curp}&nss={nss}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("get_labor_history", f"{curp} {nss}", body)
-
-    return body
+    return client.api.imss.grupo.historial_laboral.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def validate_sep_cedula(cedula, api_key=False):
-    url = f"https://apimarket.mx/api/sep/grupo/validar-cedula?cedula={cedula}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("validate_cedula", f"Cedula: {cedula}", body)
-    return body['data']
+@format_api
+@inject()
+def validate_sep_cedula(cedula: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None) -> \
+        Union[Future[ValidarCedulaPostResponse], ValidarCedulaPostResponse]:
+    return client.api.sep.grupo.validar_cedula.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def validate_sep_certificate(folio, api_key=False):
-    url = f"https://apimarket.mx/api/sep/grupo/validar-certificado?folio={folio}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("validate_certificate", f"Folio: {folio}", body)
-    return body['data']
+@format_api
+@inject()
+def validate_sep_certificate(folio: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None) -> \
+        Union[Future[ValidarCertificadoPostResponse], ValidarCertificadoPostResponse]:
+    return client.api.sep.grupo.validar_certificado.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def obtain_sep_cedula(nombres, paterno, materno, api_key=False):
-    url = f"https://apimarket.mx/api/sep/grupo/obtener-cedula?nombres={nombres}&paterno={paterno}&materno={materno}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("obtain_sep_cedula", f"{nombres} {paterno} {materno}", body)
-    return body['data']
+@format_api
+@inject()
+def obtain_sep_cedula(nombres: str, paterno: str, materno: str, client: ApiMarketClient = None,
+                      configuration: RequestConfiguration = None) -> Union[
+    Future[ObtenerCedulaPostResponse], ObtenerCedulaPostResponse]:
+    return client.api.sep.grupo.obtener_cedula.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def validate_sat_data(nombre, rfc, regimen, cp, api_key=False):
+@format_api
+@inject()
+def validate_sat_data(nombre: str, rfc: str, regimen: str, cp: str, client: ApiMarketClient = None,
+                      configuration: RequestConfiguration = None) -> Union[
+    Future[ValidarDatosPostResponse], ValidarDatosPostResponse]:
     validate_rfc(rfc)
-    url = f"https://apimarket.mx/api/sat/grupo/validar-datos?nombre={nombre}&rfc={rfc}&regimen={regimen}&cp={cp}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("validate_sat_data", f"{nombre} {rfc}", body)
-    return body['data']
+    return client.api.sat.grupo.validar_datos.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def search_credit_by_nss(nss, api_key=False):
+@format_api
+@inject()
+def search_credit_by_nss(nss: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None) -> Union[
+    Future[BuscarCreditoPostResponse], BuscarCreditoPostResponse]:
     validate_nss(nss)
-    url = f"https://apimarket.mx/api/infonavit/grupo/buscar-credito?nss={nss}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("search_credit_by_nss", f"{nss}", body)
-    return body['data']
+    return client.api.infonavit.grupo.buscar_credito.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def verify_sat_signature(rfc, password, certificate, privateKey,  api_key=False):
+@format_api
+@inject()
+def verify_sat_signature(rfc: str, password: str, certificate: str, privateKey: str, client: ApiMarketClient = None,
+                         configuration: RequestConfiguration = None):
     validate_rfc(rfc)
-    url = f"https://apimarket.mx/api/sat/grupo/verificar-firma-electronica"
-
-    headers = create_headers(api_key)
-
-    files = {
-        'userId': rfc,
-        'password': password,
-        'certificate': open(certificate, 'rb'),
-        'privateKey': open(privateKey, 'rb')
-    }
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True}, files=files)
-
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("verify_sat_signature", f"{rfc}", body)
-    return body['message']
+    return client.api.sat.grupo.verificar_firma_electronica.post, configuration
 
 
-
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def get_infonavit_subaccount(nss, api_key=False):
-    """
-       Learn more on https://apimarket.mx/marketplace/obtener-subcuenta-de-vivienda
-    """
+@format_api
+@inject()
+def get_infonavit_subaccount(nss: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None) -> \
+        Union[Future[ObtenerCuentaPostResponse], ObtenerCuentaPostResponse]:
     validate_nss(nss)
-    url = f"https://apimarket.mx/api/infonavit/grupo/obtener-cuenta?nss={nss}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("get_infonavit_subaccount", f"{nss}", body)
-    return body['data']
+    return client.api.infonavit.grupo.obtener_cuenta.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def get_mexican_fiscal_data_with_rfc(rfc, api_key=False):
-    """
-       Learn more on https://apimarket.mx/marketplace/obtener-datos-fiscales
-    """
+@format_api
+@inject()
+def get_mexican_fiscal_data_with_rfc(rfc: str, client: ApiMarketClient = None,
+                                     configuration: RequestConfiguration = None) -> Union[
+    Future[ObtenerDatosPostResponse], ObtenerDatosPostResponse]:
     validate_rfc(rfc)
-    url = f"https://apimarket.mx/api/sat/grupo/obtener-datos?rfc={rfc}"
-
-    headers = create_headers(api_key)
-
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("mexican fiscal data", rfc, body)
-    return body['data']
+    return client.api.sat.grupo.obtener_datos.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def store_token(name, company="", description="", permissions=None, rfc="", ciec="", api_key=False):
+@format_api
+@inject()
+def store_token(name: str, company: str = "", description: str = "", permissions: list = None, rfc: str = "",
+                ciec: str = "", client: ApiMarketClient = None, configuration: RequestConfiguration = None):
     if permissions is None:
         permissions = []
-    url = f"https://apimarket.mx/api/v2/apimarket/tokens"
-    headers = create_headers(api_key)
-    dynamic_body = {}
-    if rfc != "":
+    if rfc:
         validate_rfc(rfc)
-        dynamic_body['rfc'] = rfc
-        dynamic_body['ciec'] = ciec
-    response = requests.post(url, json={'name': name, 'description': description, 'permissions': permissions,
-                                        'empresa': company, **dynamic_body}, headers=headers)
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("store_tokens", name, body)
-    return body
+    return client.api.v2.apimarket.tokens.post, configuration
 
 
-@retry(retry=retry_if_exception_type(httpx.TimeoutException) | retry_if_exception_type(
-    httpx.ReadTimeout) | retry_if_exception_type(httpx.WriteTimeout))
-def retrieve_permissions(api_key=False):
-    url = f"https://apimarket.mx/api/v2/apimarket/permissions"
-    headers = create_headers(api_key)
-    response = requests.get(url, headers=headers)
-    body = response.json()
-    if response.status_code != 200 or 'data' not in body:
-        raise ServiceError("retrieve_permissions", "", body)
-    return body
+@format_api
+@inject()
+def retrieve_permissions(client: ApiMarketClient = None, configuration: RequestConfiguration = None):
+    return client.api.v2.apimarket.permissions.get, configuration

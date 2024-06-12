@@ -1,0 +1,33 @@
+{
+  "descriptionHash": "7CDB7DD6B946F04E7DD9D660B3F4D3D688A7910993742E2DFAFA4FFD2A049F36082A55FC9200F3B9FF1BAD41C98589254B11B0FA8EDD1228AFE8B5F8B83F1507",
+  "descriptionLocation": "../../../apimarket/storage/app/openapi.yml",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.15.0",
+  "clientClassName": "ApiMarketClient",
+  "clientNamespaceName": "client",
+  "language": "Python",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": false,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}

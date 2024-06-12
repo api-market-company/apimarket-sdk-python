@@ -23,7 +23,7 @@ class CLIAction(argparse.Action):
         _logger.debug("Fetching apimarket...")
         if isinstance(values, (str, int)):
             values = [values]
-        print(f"{json.dumps(self.fetch(*values))}")
+        print(f"{to_json(self.fetch(*values))}")
         _logger.debug("Script ends here")
         setattr(namespace, self.dest, values)
 
