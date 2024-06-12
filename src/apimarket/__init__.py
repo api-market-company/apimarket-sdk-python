@@ -194,7 +194,7 @@ def fetch_curp_details(curp, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
 
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
@@ -211,7 +211,7 @@ def get_curp_from_details(nombres, paterno, materno, diaNacimiento, mesNacimient
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("get_curp_from_details", f"{nombres} {paterno} {materno}", body)
@@ -227,7 +227,7 @@ def get_rfc_from_curp(curp, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("get_rfc_from_curp", f"{curp}", body)
@@ -241,7 +241,7 @@ def calculate_rfc(nombres, paterno, materno, diaNacimiento, mesNacimiento, anoNa
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("calculate_rfc", f"{nombres} {paterno} {materno}", body)
@@ -255,7 +255,7 @@ def locate_umf_by_cp(cp, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("locate_umf_by_cp", f"{cp}", body)
@@ -270,7 +270,7 @@ def locate_nss_by_curp(curp, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("locate_nss_by_curp", f"{curp}", body)
@@ -286,7 +286,7 @@ def check_nss_validity(nss, curp, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("locate_nss_by_curp", f"{curp}", body)
@@ -301,7 +301,7 @@ def get_clinica_by_curp(curp, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("get_clinica_by_curp", f"{curp}", body)
@@ -316,7 +316,7 @@ def consult_clinica_by_curp(curp, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("consult_clinica_by_curp", f"{curp}", body)
@@ -332,7 +332,7 @@ def get_labor_history(curp, nss, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("get_labor_history", f"{curp} {nss}", body)
@@ -347,7 +347,7 @@ def validate_sep_cedula(cedula, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("validate_cedula", f"Cedula: {cedula}", body)
@@ -361,7 +361,7 @@ def validate_sep_certificate(folio, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("validate_certificate", f"Folio: {folio}", body)
@@ -375,7 +375,7 @@ def obtain_sep_cedula(nombres, paterno, materno, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("obtain_sep_cedula", f"{nombres} {paterno} {materno}", body)
@@ -390,7 +390,7 @@ def validate_sat_data(nombre, rfc, regimen, cp, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("validate_sat_data", f"{nombre} {rfc}", body)
@@ -405,7 +405,7 @@ def search_credit_by_nss(nss, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("search_credit_by_nss", f"{nss}", body)
@@ -427,7 +427,7 @@ def verify_sat_signature(rfc, password, certificate, privateKey,  api_key=False)
         'privateKey': open(privateKey, 'rb')
     }
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True}, files=files)
+    response = requests.post(url, headers=headers, files=files)
 
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
@@ -447,7 +447,7 @@ def get_infonavit_subaccount(nss, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("get_infonavit_subaccount", f"{nss}", body)
@@ -465,7 +465,7 @@ def get_mexican_fiscal_data_with_rfc(rfc, api_key=False):
 
     headers = create_headers(api_key)
 
-    response = requests.post(url, headers=headers, extensions={"force_cache": True})
+    response = requests.post(url, headers=headers)
     body = response.json()
     if response.status_code != 200 or 'data' not in body:
         raise ServiceError("mexican fiscal data", rfc, body)
