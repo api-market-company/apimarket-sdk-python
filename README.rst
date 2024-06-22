@@ -36,6 +36,10 @@ There are three different ways to set the API key: you can set the API key as an
 
    APIMARKET_API_KEY="REPLACE-WITH-YOUR-API-HERE"
 
+Usage
+------------
+Learn how to install and use the program through this `playground <./notebooks/playground.ipynb>`_.
+
 
 Python
 -------

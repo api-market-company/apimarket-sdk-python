@@ -5,6 +5,7 @@ from asyncio import Future
 from dataclasses import make_dataclass
 from typing import Union
 
+import nest_asyncio
 from decouple import config
 from kink import inject, di
 from kiota_abstractions.authentication import AccessTokenProvider, AllowedHostsValidator, \
@@ -31,6 +32,8 @@ from apimarket.models.curp_a_p_i_response import CurpAPIResponse
 from apimarket.models.historial_data import HistorialData
 from apimarket.validations import validate_curp, validate_rfc, validate_nss
 
+nest_asyncio.apply()
+
 
 class EnvironmentTokenProvider(AccessTokenProvider):
     def __init__(self, token=""):
@@ -45,7 +48,7 @@ class EnvironmentTokenProvider(AccessTokenProvider):
         pass
 
 
-def assemble(api_key="", headers=None, sandbox=False, async_client=False):
+def assemble(api_key: str = "", headers: dict[str, str] = None, sandbox: bool = False, async_client: bool = False):
     if headers is None:
         headers = {}
     collection = HeadersCollection()
@@ -150,8 +153,8 @@ def get_curp_from_details(nombres: str, paterno: str, materno: str, diaNacimient
 
 @format_api
 @inject()
-def get_rfc_from_curp(curp: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None)\
-        -> Union[Future[ObtenerRfcPostResponse], ObtenerRfcPostResponse]:
+def get_rfc_from_curp(curp: str, client: ApiMarketClient = None, configuration: RequestConfiguration = None) -> Union[
+    Future[ObtenerRfcPostResponse], ObtenerRfcPostResponse]:
     validate_curp(curp)
     return client.api.sat.grupo.obtener_rfc.post, configuration
 
@@ -159,8 +162,8 @@ def get_rfc_from_curp(curp: str, client: ApiMarketClient = None, configuration: 
 @format_api
 @inject()
 def calculate_rfc(nombres: str, paterno: str, materno: str, diaNacimiento: int, mesNacimiento: int, anoNacimiento: int,
-                  client: ApiMarketClient = None, configuration: RequestConfiguration = None)\
-        -> Union[Future[CalcularRfcPostResponse], CalcularRfcPostResponse]:
+                  client: ApiMarketClient = None, configuration: RequestConfiguration = None) -> Union[
+    Future[CalcularRfcPostResponse], CalcularRfcPostResponse]:
     return client.api.sat.grupo.calcular_rfc.post, configuration
 
 
