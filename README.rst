@@ -55,6 +55,16 @@ Fetch CURP details
    result = apimarket.fetch_curp_details("LOOA531113HTCPBN07")
    print(result)
 
+Fetch INFONAVIT subaccount by NSS.
+++++++++++++++++++
+
+.. code-block:: python3
+
+   import apimarket
+   # You can configure the calls with apimarket.assemble(api_key: str, async_client:boolean=False, headers:dict[str,str], sandbox=False)
+   result = apimarket.get_infonavit_subaccount_by_nss("")
+   print(result)
+
 CLI
 ----
 You can consult the full list on CLI Docs.
