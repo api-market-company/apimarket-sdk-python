@@ -112,6 +112,17 @@ Multiple calls
    print(result)
 
 
+Fetch INFONAVIT subaccount by NSS.
+++++++++++++++++
+
+.. code-block:: python3
+
+   import apimarket
+   NSS = ""
+   result = apimarket.get_infonavit_subaccount_by_nss(NSS)
+   print(result)
+
+
 CLI
 ----
 You can consult the full list on CLI Docs.
