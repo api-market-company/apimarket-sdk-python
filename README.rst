@@ -34,7 +34,7 @@ Installation
 
    
 Getting Started
--------
+----------------
 
 1. Copy a token in https://apimarket.mx/app/tokens
 
@@ -55,7 +55,7 @@ Getting Started
 
 
 Save API KEY securily
-------------
+---------------------
 There are three different ways to set the API key: you can set the API key as an environment variable in your shell, in the .env file, or call functions with your API key.
 
 .. code-block:: bash
@@ -88,7 +88,7 @@ Fetch CURP details
 
    
 Fetch "Historial Laboral" details
-++++++++++++++++++
+++++++++++++++++++++++++++++++++++
 
 .. code-block:: python3
 
@@ -114,7 +114,7 @@ Multiple calls
 
 
 Fetch INFONAVIT subaccount by NSS.
-++++++++++++++++
++++++++++++++++++++++++++++++++++++
 
 .. code-block:: python3
 
@@ -158,8 +158,8 @@ csvcut belongs to csvkit library
 .. _pyscaffold-notes:
 
 
-Servicios (Español)
------------
+Servicios
+--------------------
 
 Valida CURP API
 ++++++++++++++++++++++++++++++++++++

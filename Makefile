@@ -1,2 +1,4 @@
-sync:
-	kiota generate -l python -c PostsClient -n client -d ./posts-api.yml -o ./client
+build:
+	rm -rf ./dist
+	tox -e build
+	tox -e publish -- --repository pypi
