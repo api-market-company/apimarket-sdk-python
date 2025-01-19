@@ -5,6 +5,7 @@ from kiota_abstractions.request_adapter import RequestAdapter
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
+    from .obtener_acta_de_nacimiento.obtener_acta_de_nacimiento_request_builder import ObtenerActaDeNacimientoRequestBuilder
     from .obtener_curp.obtener_curp_request_builder import ObtenerCurpRequestBuilder
     from .valida_curp.valida_curp_request_builder import ValidaCurpRequestBuilder
 
@@ -20,6 +21,15 @@ class GrupoRequestBuilder(BaseRequestBuilder):
         Returns: None
         """
         super().__init__(request_adapter, "{+baseurl}/api/renapo/grupo", path_parameters)
+    
+    @property
+    def obtener_acta_de_nacimiento(self) -> ObtenerActaDeNacimientoRequestBuilder:
+        """
+        The obtenerActaDeNacimiento property
+        """
+        from .obtener_acta_de_nacimiento.obtener_acta_de_nacimiento_request_builder import ObtenerActaDeNacimientoRequestBuilder
+
+        return ObtenerActaDeNacimientoRequestBuilder(self.request_adapter, self.path_parameters)
     
     @property
     def obtener_curp(self) -> ObtenerCurpRequestBuilder:

@@ -1,11 +1,12 @@
 from __future__ import annotations
 import datetime
 from dataclasses import dataclass, field
-
-import dateparser
 from kiota_abstractions.serialization import AdditionalDataHolder, Parsable, ParseNode, SerializationWriter
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
+import dateparser
 
+if TYPE_CHECKING:
+    from .historial_laboral_post_response_data_historial_laboral_movimientos import HistorialLaboralPostResponse_data_historialLaboral_movimientos
 
 @dataclass
 class HistorialLaboralPostResponse_data_historialLaboral(AdditionalDataHolder, Parsable):
@@ -18,6 +19,8 @@ class HistorialLaboralPostResponse_data_historialLaboral(AdditionalDataHolder, P
     fecha_alta: Optional[datetime.date] = None
     # The fechaBaja property
     fecha_baja: Optional[datetime.date] = None
+    # The movimientos property
+    movimientos: Optional[List[HistorialLaboralPostResponse_data_historialLaboral_movimientos]] = None
     # The nombrePatron property
     nombre_patron: Optional[str] = None
     # The registroPatronal property
@@ -41,10 +44,15 @@ class HistorialLaboralPostResponse_data_historialLaboral(AdditionalDataHolder, P
         The deserialization information for the current model
         Returns: Dict[str, Callable[[ParseNode], None]]
         """
+        from .historial_laboral_post_response_data_historial_laboral_movimientos import HistorialLaboralPostResponse_data_historialLaboral_movimientos
+
+        from .historial_laboral_post_response_data_historial_laboral_movimientos import HistorialLaboralPostResponse_data_historialLaboral_movimientos
+
         fields: Dict[str, Callable[[Any], None]] = {
             "entidadFederativa": lambda n : setattr(self, 'entidad_federativa', n.get_str_value()),
             "fechaAlta": lambda n : setattr(self, 'fecha_alta', dateparser.parse(n.get_str_value())),
             "fechaBaja": lambda n : setattr(self, 'fecha_baja', dateparser.parse(n.get_str_value())),
+            "movimientos": lambda n : setattr(self, 'movimientos', n.get_collection_of_object_values(HistorialLaboralPostResponse_data_historialLaboral_movimientos)),
             "nombrePatron": lambda n : setattr(self, 'nombre_patron', n.get_str_value()),
             "registroPatronal": lambda n : setattr(self, 'registro_patronal', n.get_str_value()),
             "salarioBaseCotizacion": lambda n : setattr(self, 'salario_base_cotizacion', n.get_str_value()),
@@ -62,6 +70,7 @@ class HistorialLaboralPostResponse_data_historialLaboral(AdditionalDataHolder, P
         writer.write_str_value("entidadFederativa", self.entidad_federativa)
         writer.write_date_value("fechaAlta", self.fecha_alta)
         writer.write_date_value("fechaBaja", self.fecha_baja)
+        writer.write_collection_of_object_values("movimientos", self.movimientos)
         writer.write_str_value("nombrePatron", self.nombre_patron)
         writer.write_str_value("registroPatronal", self.registro_patronal)
         writer.write_str_value("salarioBaseCotizacion", self.salario_base_cotizacion)

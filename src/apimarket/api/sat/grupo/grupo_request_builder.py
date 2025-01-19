@@ -9,7 +9,9 @@ if TYPE_CHECKING:
     from .obtener_datos.obtener_datos_request_builder import ObtenerDatosRequestBuilder
     from .obtener_datos_idcif.obtener_datos_idcif_request_builder import ObtenerDatosIdcifRequestBuilder
     from .obtener_rfc.obtener_rfc_request_builder import ObtenerRfcRequestBuilder
+    from .parse_csf.parse_csf_request_builder import ParseCsfRequestBuilder
     from .validar_datos.validar_datos_request_builder import ValidarDatosRequestBuilder
+    from .validar_rfc.validar_rfc_request_builder import ValidarRfcRequestBuilder
     from .verificar_firma_electronica.verificar_firma_electronica_request_builder import VerificarFirmaElectronicaRequestBuilder
 
 class GrupoRequestBuilder(BaseRequestBuilder):
@@ -62,6 +64,15 @@ class GrupoRequestBuilder(BaseRequestBuilder):
         return ObtenerRfcRequestBuilder(self.request_adapter, self.path_parameters)
     
     @property
+    def parse_csf(self) -> ParseCsfRequestBuilder:
+        """
+        The parseCsf property
+        """
+        from .parse_csf.parse_csf_request_builder import ParseCsfRequestBuilder
+
+        return ParseCsfRequestBuilder(self.request_adapter, self.path_parameters)
+    
+    @property
     def validar_datos(self) -> ValidarDatosRequestBuilder:
         """
         The validarDatos property
@@ -69,6 +80,15 @@ class GrupoRequestBuilder(BaseRequestBuilder):
         from .validar_datos.validar_datos_request_builder import ValidarDatosRequestBuilder
 
         return ValidarDatosRequestBuilder(self.request_adapter, self.path_parameters)
+    
+    @property
+    def validar_rfc(self) -> ValidarRfcRequestBuilder:
+        """
+        The validarRfc property
+        """
+        from .validar_rfc.validar_rfc_request_builder import ValidarRfcRequestBuilder
+
+        return ValidarRfcRequestBuilder(self.request_adapter, self.path_parameters)
     
     @property
     def verificar_firma_electronica(self) -> VerificarFirmaElectronicaRequestBuilder:

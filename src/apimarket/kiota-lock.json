@@ -1,10 +1,10 @@
 {
-  "descriptionHash": "7CDB7DD6B946F04E7DD9D660B3F4D3D688A7910993742E2DFAFA4FFD2A049F36082A55FC9200F3B9FF1BAD41C98589254B11B0FA8EDD1228AFE8B5F8B83F1507",
-  "descriptionLocation": "../../../apimarket/storage/app/openapi.yml",
+  "descriptionHash": "7A5E146100ED5CF9019E0A9A76580DB0E9914D908E9E105FA4CFD17DA10BE056A1560ED97439A93A7F28815870D5AA50D28A748B1862834567DCD9E867AD2963",
+  "descriptionLocation": "https://apimarket.mx/openapi.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.15.0",
   "clientClassName": "ApiMarketClient",
-  "clientNamespaceName": "client",
+  "clientNamespaceName": "ApiMarket.Client",
   "language": "Python",
   "usesBackingStore": false,
   "excludeBackwardCompatible": false,

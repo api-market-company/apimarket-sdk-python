@@ -8,6 +8,14 @@ class ObtenerCedulaPostResponse(AdditionalDataHolder, Parsable):
     # Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.
     additional_data: Dict[str, Any] = field(default_factory=dict)
 
+    # Código de validación único para la solicitud
+    codigo_validacion: Optional[str] = None
+    # Mensaje que indica el problema con el token
+    message: Optional[str] = None
+    # Código de estado HTTP
+    status: Optional[int] = None
+    # Indica si la solicitud fue exitosa
+    success: Optional[bool] = None
     
     @staticmethod
     def create_from_discriminator_value(parse_node: ParseNode) -> ObtenerCedulaPostResponse:
@@ -26,6 +34,10 @@ class ObtenerCedulaPostResponse(AdditionalDataHolder, Parsable):
         Returns: Dict[str, Callable[[ParseNode], None]]
         """
         fields: Dict[str, Callable[[Any], None]] = {
+            "codigoValidacion": lambda n : setattr(self, 'codigo_validacion', n.get_str_value()),
+            "message": lambda n : setattr(self, 'message', n.get_str_value()),
+            "status": lambda n : setattr(self, 'status', n.get_int_value()),
+            "success": lambda n : setattr(self, 'success', n.get_bool_value()),
         }
         return fields
     
@@ -37,6 +49,10 @@ class ObtenerCedulaPostResponse(AdditionalDataHolder, Parsable):
         """
         if not writer:
             raise TypeError("writer cannot be null.")
+        writer.write_str_value("codigoValidacion", self.codigo_validacion)
+        writer.write_str_value("message", self.message)
+        writer.write_int_value("status", self.status)
+        writer.write_bool_value("success", self.success)
         writer.write_additional_data_value(self.additional_data)
     
 

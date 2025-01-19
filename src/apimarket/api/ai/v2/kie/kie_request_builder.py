@@ -34,7 +34,7 @@ class KieRequestBuilder(BaseRequestBuilder):
     
     async def post(self,body: KiePostRequestBody, request_configuration: Optional[RequestConfiguration[QueryParameters]] = None) -> bytes:
         """
-        La Extracción de Información Clave tiene como objetivo extraer información estructurada (por ejemplo, pares clave-valor) de documentos con estilo de formulario (por ejemplo, facturas), lo que constituye un paso importante hacia la comprensión inteligente de documentos.
+        OCR de documentos de identidad
         param body: The request body
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: bytes
@@ -61,7 +61,7 @@ class KieRequestBuilder(BaseRequestBuilder):
     
     def to_post_request_information(self,body: KiePostRequestBody, request_configuration: Optional[RequestConfiguration[QueryParameters]] = None) -> RequestInformation:
         """
-        La Extracción de Información Clave tiene como objetivo extraer información estructurada (por ejemplo, pares clave-valor) de documentos con estilo de formulario (por ejemplo, facturas), lo que constituye un paso importante hacia la comprensión inteligente de documentos.
+        OCR de documentos de identidad
         param body: The request body
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: RequestInformation

@@ -3,6 +3,7 @@ import datetime
 from dataclasses import dataclass, field
 from kiota_abstractions.serialization import AdditionalDataHolder, Parsable, ParseNode, SerializationWriter
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
+import dateparser
 
 if TYPE_CHECKING:
     from .doc_probatorio_data import DocProbatorioData
@@ -68,7 +69,7 @@ class ValidCURPUserData(AdditionalDataHolder, Parsable):
             "datosDocProbatorio": lambda n : setattr(self, 'datos_doc_probatorio', n.get_object_value(DocProbatorioData)),
             "docProbatorio": lambda n : setattr(self, 'doc_probatorio', n.get_int_value()),
             "estadoNacimiento": lambda n : setattr(self, 'estado_nacimiento', n.get_str_value()),
-            "fechaNacimiento": lambda n : setattr(self, 'fecha_nacimiento', n.get_date_value()),
+            "fechaNacimiento": lambda n : setattr(self, 'fecha_nacimiento', dateparser.parse(n.get_str_value())),
             "historial": lambda n : setattr(self, 'historial', n.get_object_value(HistorialData)),
             "nombres": lambda n : setattr(self, 'nombres', n.get_str_value()),
             "paisNacimiento": lambda n : setattr(self, 'pais_nacimiento', n.get_str_value()),

@@ -34,7 +34,7 @@ class CalcularRfcRequestBuilder(BaseRequestBuilder):
     
     async def post(self,request_configuration: Optional[RequestConfiguration[CalcularRfcRequestBuilderPostQueryParameters]] = None) -> Optional[CalcularRfcPostResponse]:
         """
-        Valida la cedula profesional enviada en la base de datos oficial del Registro Nacional de Profesionistas,_Nota: no se muestran resultados de cedulas en proceso de titulacion._
+        Calcula el RFC mediante algoritmo con datos de la persona. Nota: Este endpoint genera el RFC usando los datos de la persona, y no lo valida con la base de datos del SAT.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: Optional[CalcularRfcPostResponse]
         """
@@ -60,7 +60,7 @@ class CalcularRfcRequestBuilder(BaseRequestBuilder):
     
     def to_post_request_information(self,request_configuration: Optional[RequestConfiguration[CalcularRfcRequestBuilderPostQueryParameters]] = None) -> RequestInformation:
         """
-        Valida la cedula profesional enviada en la base de datos oficial del Registro Nacional de Profesionistas,_Nota: no se muestran resultados de cedulas en proceso de titulacion._
+        Calcula el RFC mediante algoritmo con datos de la persona. Nota: Este endpoint genera el RFC usando los datos de la persona, y no lo valida con la base de datos del SAT.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: RequestInformation
         """
@@ -82,7 +82,7 @@ class CalcularRfcRequestBuilder(BaseRequestBuilder):
     @dataclass
     class CalcularRfcRequestBuilderPostQueryParameters():
         """
-        Valida la cedula profesional enviada en la base de datos oficial del Registro Nacional de Profesionistas,_Nota: no se muestran resultados de cedulas en proceso de titulacion._
+        Calcula el RFC mediante algoritmo con datos de la persona. Nota: Este endpoint genera el RFC usando los datos de la persona, y no lo valida con la base de datos del SAT.
         """
         def get_query_parameter(self,original_name: str) -> str:
             """

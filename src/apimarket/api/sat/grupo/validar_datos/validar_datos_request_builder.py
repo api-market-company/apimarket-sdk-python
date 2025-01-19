@@ -35,7 +35,7 @@ class ValidarDatosRequestBuilder(BaseRequestBuilder):
     
     async def post(self,request_configuration: Optional[RequestConfiguration[ValidarDatosRequestBuilderPostQueryParameters]] = None) -> Optional[ValidarDatosPostResponse]:
         """
-        Valida los datos enviados buscando coincidencia con los registros en la base de datos del **SAT.**_Nota: Si el usuario a consultar tiene mas de un regimen, separe los condigo con un_ "|"
+        Valida los datos enviados buscando coincidencia con los registros en la base de datos del SAT.Nota: Si el usuario a consultar tiene mas de un regimen, separalos con un pipe |.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: Optional[ValidarDatosPostResponse]
         """
@@ -63,7 +63,7 @@ class ValidarDatosRequestBuilder(BaseRequestBuilder):
     
     def to_post_request_information(self,request_configuration: Optional[RequestConfiguration[ValidarDatosRequestBuilderPostQueryParameters]] = None) -> RequestInformation:
         """
-        Valida los datos enviados buscando coincidencia con los registros en la base de datos del **SAT.**_Nota: Si el usuario a consultar tiene mas de un regimen, separe los condigo con un_ "|"
+        Valida los datos enviados buscando coincidencia con los registros en la base de datos del SAT.Nota: Si el usuario a consultar tiene mas de un regimen, separalos con un pipe |.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: RequestInformation
         """
@@ -85,7 +85,7 @@ class ValidarDatosRequestBuilder(BaseRequestBuilder):
     @dataclass
     class ValidarDatosRequestBuilderPostQueryParameters():
         """
-        Valida los datos enviados buscando coincidencia con los registros en la base de datos del **SAT.**_Nota: Si el usuario a consultar tiene mas de un regimen, separe los condigo con un_ "|"
+        Valida los datos enviados buscando coincidencia con los registros en la base de datos del SAT.Nota: Si el usuario a consultar tiene mas de un regimen, separalos con un pipe |.
         """
         cp: Optional[int] = None
 

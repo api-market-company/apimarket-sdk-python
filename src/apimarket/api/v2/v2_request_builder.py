@@ -6,6 +6,7 @@ from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from .apimarket.apimarket_request_builder import ApimarketRequestBuilder
+    from .codigos_postales.codigos_postales_request_builder import CodigosPostalesRequestBuilder
 
 class V2RequestBuilder(BaseRequestBuilder):
     """
@@ -28,5 +29,14 @@ class V2RequestBuilder(BaseRequestBuilder):
         from .apimarket.apimarket_request_builder import ApimarketRequestBuilder
 
         return ApimarketRequestBuilder(self.request_adapter, self.path_parameters)
+    
+    @property
+    def codigos_postales(self) -> CodigosPostalesRequestBuilder:
+        """
+        The codigosPostales property
+        """
+        from .codigos_postales.codigos_postales_request_builder import CodigosPostalesRequestBuilder
+
+        return CodigosPostalesRequestBuilder(self.request_adapter, self.path_parameters)
     
 

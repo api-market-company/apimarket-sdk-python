@@ -35,7 +35,7 @@ class ObtenerRfcRequestBuilder(BaseRequestBuilder):
     
     async def post(self,request_configuration: Optional[RequestConfiguration[ObtenerRfcRequestBuilderPostQueryParameters]] = None) -> Optional[ObtenerRfcPostResponse]:
         """
-        Obtiene el RFC Oficial registrado en el SAT, mediante el envio de curp_Nota: no se muestran resultados de RFC sin registro_
+        Obtiene el RFC Oficial registrado en el SAT, mediante el envío de CURPNota: no se muestran resultados de RFC sin registro.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: Optional[ObtenerRfcPostResponse]
         """
@@ -63,7 +63,7 @@ class ObtenerRfcRequestBuilder(BaseRequestBuilder):
     
     def to_post_request_information(self,request_configuration: Optional[RequestConfiguration[ObtenerRfcRequestBuilderPostQueryParameters]] = None) -> RequestInformation:
         """
-        Obtiene el RFC Oficial registrado en el SAT, mediante el envio de curp_Nota: no se muestran resultados de RFC sin registro_
+        Obtiene el RFC Oficial registrado en el SAT, mediante el envío de CURPNota: no se muestran resultados de RFC sin registro.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: RequestInformation
         """
@@ -85,7 +85,7 @@ class ObtenerRfcRequestBuilder(BaseRequestBuilder):
     @dataclass
     class ObtenerRfcRequestBuilderPostQueryParameters():
         """
-        Obtiene el RFC Oficial registrado en el SAT, mediante el envio de curp_Nota: no se muestran resultados de RFC sin registro_
+        Obtiene el RFC Oficial registrado en el SAT, mediante el envío de CURPNota: no se muestran resultados de RFC sin registro.
         """
         # Clave Unica de Registro de Poblacion
         curp: Optional[str] = None

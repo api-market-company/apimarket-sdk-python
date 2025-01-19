@@ -7,6 +7,7 @@ from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 if TYPE_CHECKING:
     from .capturar_movimientos_afiliatorios.capturar_movimientos_afiliatorios_request_builder import CapturarMovimientosAfiliatoriosRequestBuilder
     from .consultar_movimientos_afiliatorios.consultar_movimientos_afiliatorios_request_builder import ConsultarMovimientosAfiliatoriosRequestBuilder
+    from .registros_patronales.registros_patronales_request_builder import RegistrosPatronalesRequestBuilder
     from .seguir_lote.seguir_lote_request_builder import SeguirLoteRequestBuilder
 
 class IdseRequestBuilder(BaseRequestBuilder):
@@ -39,6 +40,15 @@ class IdseRequestBuilder(BaseRequestBuilder):
         from .consultar_movimientos_afiliatorios.consultar_movimientos_afiliatorios_request_builder import ConsultarMovimientosAfiliatoriosRequestBuilder
 
         return ConsultarMovimientosAfiliatoriosRequestBuilder(self.request_adapter, self.path_parameters)
+    
+    @property
+    def registros_patronales(self) -> RegistrosPatronalesRequestBuilder:
+        """
+        The registrosPatronales property
+        """
+        from .registros_patronales.registros_patronales_request_builder import RegistrosPatronalesRequestBuilder
+
+        return RegistrosPatronalesRequestBuilder(self.request_adapter, self.path_parameters)
     
     @property
     def seguir_lote(self) -> SeguirLoteRequestBuilder:

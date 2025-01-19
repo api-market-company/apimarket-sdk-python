@@ -1,10 +1,7 @@
 from __future__ import annotations
-
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, Optional
-
 from kiota_abstractions.serialization import AdditionalDataHolder, Parsable, ParseNode, SerializationWriter
-
+from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 
 @dataclass
 class BuscarCreditoPostResponse_data(AdditionalDataHolder, Parsable):
@@ -17,7 +14,7 @@ class BuscarCreditoPostResponse_data(AdditionalDataHolder, Parsable):
     ap_paterno: Optional[str] = None
     # Correo electrónico personal del solicitante
     email_personal: Optional[str] = None
-    # Conjunto de estatus de INFONAVIT: nulo (no cuenta con crédito), AC (cuenta con crédito)
+    # nulo (no cuenta con crédito), AC (cuenta con crédito)
     estatus_credito: Optional[str] = None
     # Fecha de cierre del crédito en formato YYYYMMDD, puede estar vacío si el crédito está activo
     fecha_cierre: Optional[str] = None
@@ -49,7 +46,7 @@ class BuscarCreditoPostResponse_data(AdditionalDataHolder, Parsable):
     telefono_celular: Optional[str] = None
     # El conjunto de modalidades que INFONAVIT maneja: Hipotecario (estándar), COFINAVIT, COFINAVIT INGRESOS ADICIONALES, INFONAVIT TOTAL, TU SEGUNDO CRÉDITO INFONAVIT
     tipo_credito: Optional[str] = None
-
+    
     @staticmethod
     def create_from_discriminator_value(parse_node: ParseNode) -> BuscarCreditoPostResponse_data:
         """
@@ -60,35 +57,36 @@ class BuscarCreditoPostResponse_data(AdditionalDataHolder, Parsable):
         if not parse_node:
             raise TypeError("parse_node cannot be null.")
         return BuscarCreditoPostResponse_data()
-
-    def get_field_deserializers(self, ) -> Dict[str, Callable[[ParseNode], None]]:
+    
+    def get_field_deserializers(self,) -> Dict[str, Callable[[ParseNode], None]]:
         """
         The deserialization information for the current model
         Returns: Dict[str, Callable[[ParseNode], None]]
         """
         fields: Dict[str, Callable[[Any], None]] = {
-            "apMaterno": lambda n: setattr(self, 'ap_materno', n.get_str_value()),
-            "apPaterno": lambda n: setattr(self, 'ap_paterno', n.get_str_value()),
-            "emailPersonal": lambda n: setattr(self, 'email_personal', n.get_str_value()),
-            "estatus_credito": lambda n: setattr(self, 'estatus_credito', n.get_str_value()),
-            "fechaCierre": lambda n: setattr(self, 'fecha_cierre', n.get_str_value()),
-            "fechaOrigen": lambda n: setattr(self, 'fecha_origen', n.get_str_value()),
-            "mesesomisos": lambda n: setattr(self, 'mesesomisos', n.get_str_value()),
-            "moneda": lambda n: setattr(self, 'moneda', n.get_str_value()),
-            "nombre": lambda n: setattr(self, 'nombre', n.get_str_value()),
-            "nss": lambda n: setattr(self, 'nss', n.get_str_value()),
-            "num_credito": lambda n: setattr(self, 'num_credito', n.get_str_value()),
-            "pool": lambda n: setattr(self, 'pool', n.get_str_value()),
-            "producto": lambda n: setattr(self, 'producto', n.get_str_value()),
-            "regimen": lambda n: setattr(self, 'regimen', n.get_str_value()),
-            "rfc": lambda n: setattr(self, 'rfc', n.get_str_value()),
-            "scurp": lambda n: setattr(self, 'scurp', n.get_str_value()),
-            "situacioncredito": lambda n: setattr(self, 'situacioncredito', n.get_str_value()),
-            "telefonoCelular": lambda n: setattr(self, 'telefono_celular', n.get_str_value()),
-            "tipo_credito": lambda n: setattr(self, 'tipo_credito', n.get_str_value()), }
+            "apMaterno": lambda n : setattr(self, 'ap_materno', n.get_str_value()),
+            "apPaterno": lambda n : setattr(self, 'ap_paterno', n.get_str_value()),
+            "emailPersonal": lambda n : setattr(self, 'email_personal', n.get_str_value()),
+            "estatus_credito": lambda n : setattr(self, 'estatus_credito', n.get_str_value()),
+            "fechaCierre": lambda n : setattr(self, 'fecha_cierre', n.get_str_value()),
+            "fechaOrigen": lambda n : setattr(self, 'fecha_origen', n.get_str_value()),
+            "mesesomisos": lambda n : setattr(self, 'mesesomisos', n.get_str_value()),
+            "moneda": lambda n : setattr(self, 'moneda', n.get_str_value()),
+            "nombre": lambda n : setattr(self, 'nombre', n.get_str_value()),
+            "nss": lambda n : setattr(self, 'nss', n.get_str_value()),
+            "num_credito": lambda n : setattr(self, 'num_credito', n.get_str_value()),
+            "pool": lambda n : setattr(self, 'pool', n.get_str_value()),
+            "producto": lambda n : setattr(self, 'producto', n.get_str_value()),
+            "regimen": lambda n : setattr(self, 'regimen', n.get_str_value()),
+            "rfc": lambda n : setattr(self, 'rfc', n.get_str_value()),
+            "scurp": lambda n : setattr(self, 'scurp', n.get_str_value()),
+            "situacioncredito": lambda n : setattr(self, 'situacioncredito', n.get_str_value()),
+            "telefonoCelular": lambda n : setattr(self, 'telefono_celular', n.get_str_value()),
+            "tipo_credito": lambda n : setattr(self, 'tipo_credito', n.get_str_value()),
+        }
         return fields
-
-    def serialize(self, writer: SerializationWriter) -> None:
+    
+    def serialize(self,writer: SerializationWriter) -> None:
         """
         Serializes information the current object
         param writer: Serialization writer to use to serialize this model
@@ -116,3 +114,5 @@ class BuscarCreditoPostResponse_data(AdditionalDataHolder, Parsable):
         writer.write_str_value("telefonoCelular", self.telefono_celular)
         writer.write_str_value("tipo_credito", self.tipo_credito)
         writer.write_additional_data_value(self.additional_data)
+    
+

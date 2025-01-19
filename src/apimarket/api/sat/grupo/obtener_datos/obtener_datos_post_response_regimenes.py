@@ -1,10 +1,9 @@
 from __future__ import annotations
 import datetime
 from dataclasses import dataclass, field
-
-import dateparser
 from kiota_abstractions.serialization import AdditionalDataHolder, Parsable, ParseNode, SerializationWriter
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
+import dateparser
 
 @dataclass
 class ObtenerDatosPostResponse_regimenes(AdditionalDataHolder, Parsable):

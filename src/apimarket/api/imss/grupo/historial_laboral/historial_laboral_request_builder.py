@@ -34,7 +34,7 @@ class HistorialLaboralRequestBuilder(BaseRequestBuilder):
     
     async def post(self,request_configuration: Optional[RequestConfiguration[HistorialLaboralRequestBuilderPostQueryParameters]] = None) -> Optional[HistorialLaboralPostResponse]:
         """
-        Obtiene el historial Laboral registrado en el IMSS con sus semanas cotizadas, fechas de alta y baja, asi como el salario, razon social y registro patronal del empleador._Nota: Cada seguro social solo puede ser consultado 3 veces por dia, al exceder ese limite el sistema del seguro social bloquea las peticiones hasta pasar 24hrs._
+        Obtiene el historial Laboral registrado en el IMSS con sus semanas cotizadas, fechas de alta y baja, asi como el salario, razon social y registro patronal del empleador.La respuesta incluye la constancia en formato PDF que puede ser descargada o visualizada en el navegador por un periodo de 2 horas. Si desea obtener la constancia después de las 2 horas debe solicitarla nuevamente.Cada seguro social solo puede ser consultado 3 veces por dia, al exceder ese limite el sistema del seguro social bloquea las peticiones hasta pasar 24hrs.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: Optional[HistorialLaboralPostResponse]
         """
@@ -60,7 +60,7 @@ class HistorialLaboralRequestBuilder(BaseRequestBuilder):
     
     def to_post_request_information(self,request_configuration: Optional[RequestConfiguration[HistorialLaboralRequestBuilderPostQueryParameters]] = None) -> RequestInformation:
         """
-        Obtiene el historial Laboral registrado en el IMSS con sus semanas cotizadas, fechas de alta y baja, asi como el salario, razon social y registro patronal del empleador._Nota: Cada seguro social solo puede ser consultado 3 veces por dia, al exceder ese limite el sistema del seguro social bloquea las peticiones hasta pasar 24hrs._
+        Obtiene el historial Laboral registrado en el IMSS con sus semanas cotizadas, fechas de alta y baja, asi como el salario, razon social y registro patronal del empleador.La respuesta incluye la constancia en formato PDF que puede ser descargada o visualizada en el navegador por un periodo de 2 horas. Si desea obtener la constancia después de las 2 horas debe solicitarla nuevamente.Cada seguro social solo puede ser consultado 3 veces por dia, al exceder ese limite el sistema del seguro social bloquea las peticiones hasta pasar 24hrs.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: RequestInformation
         """
@@ -82,7 +82,7 @@ class HistorialLaboralRequestBuilder(BaseRequestBuilder):
     @dataclass
     class HistorialLaboralRequestBuilderPostQueryParameters():
         """
-        Obtiene el historial Laboral registrado en el IMSS con sus semanas cotizadas, fechas de alta y baja, asi como el salario, razon social y registro patronal del empleador._Nota: Cada seguro social solo puede ser consultado 3 veces por dia, al exceder ese limite el sistema del seguro social bloquea las peticiones hasta pasar 24hrs._
+        Obtiene el historial Laboral registrado en el IMSS con sus semanas cotizadas, fechas de alta y baja, asi como el salario, razon social y registro patronal del empleador.La respuesta incluye la constancia en formato PDF que puede ser descargada o visualizada en el navegador por un periodo de 2 horas. Si desea obtener la constancia después de las 2 horas debe solicitarla nuevamente.Cada seguro social solo puede ser consultado 3 veces por dia, al exceder ese limite el sistema del seguro social bloquea las peticiones hasta pasar 24hrs.
         """
         # Clave Unica de Registro de Poblacion
         curp: Optional[str] = None

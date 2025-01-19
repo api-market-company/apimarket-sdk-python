@@ -35,7 +35,7 @@ class ValidarCertificadoRequestBuilder(BaseRequestBuilder):
     
     async def post(self,request_configuration: Optional[RequestConfiguration[ValidarCertificadoRequestBuilderPostQueryParameters]] = None) -> Optional[ValidarCertificadoPostResponse]:
         """
-        Busqueda de folio electronico de certificados en el sistema DGETI de la Secretaria de Educacion Publica._Nota: Solo podran ser consultados los certificados que se encuentren Digitalizados (Que tengan QR)_
+        Busqueda de folio electronico de certificados en el sistema DGETI de la Secretaria de Educacion Publica.Nota: Solo podran ser consultados los certificados que se encuentren Digitalizados (Que tengan QR)_
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: Optional[ValidarCertificadoPostResponse]
         """
@@ -63,7 +63,7 @@ class ValidarCertificadoRequestBuilder(BaseRequestBuilder):
     
     def to_post_request_information(self,request_configuration: Optional[RequestConfiguration[ValidarCertificadoRequestBuilderPostQueryParameters]] = None) -> RequestInformation:
         """
-        Busqueda de folio electronico de certificados en el sistema DGETI de la Secretaria de Educacion Publica._Nota: Solo podran ser consultados los certificados que se encuentren Digitalizados (Que tengan QR)_
+        Busqueda de folio electronico de certificados en el sistema DGETI de la Secretaria de Educacion Publica.Nota: Solo podran ser consultados los certificados que se encuentren Digitalizados (Que tengan QR)_
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: RequestInformation
         """
@@ -85,7 +85,7 @@ class ValidarCertificadoRequestBuilder(BaseRequestBuilder):
     @dataclass
     class ValidarCertificadoRequestBuilderPostQueryParameters():
         """
-        Busqueda de folio electronico de certificados en el sistema DGETI de la Secretaria de Educacion Publica._Nota: Solo podran ser consultados los certificados que se encuentren Digitalizados (Que tengan QR)_
+        Busqueda de folio electronico de certificados en el sistema DGETI de la Secretaria de Educacion Publica.Nota: Solo podran ser consultados los certificados que se encuentren Digitalizados (Que tengan QR)_
         """
         # Folio Electronico del certificado
         folio: Optional[str] = None

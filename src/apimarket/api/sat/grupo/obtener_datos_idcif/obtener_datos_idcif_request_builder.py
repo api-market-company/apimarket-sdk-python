@@ -15,8 +15,8 @@ from warnings import warn
 if TYPE_CHECKING:
     from .obtener_datos_idcif400_error import ObtenerDatosIdcif400Error
     from .obtener_datos_idcif401_error import ObtenerDatosIdcif401Error
+    from .obtener_datos_idcif404_error import ObtenerDatosIdcif404Error
     from .obtener_datos_idcif4_x_x_error import ObtenerDatosIdcif4XXError
-    from .obtener_datos_idcif500_error import ObtenerDatosIdcif500Error
     from .obtener_datos_idcif5_x_x_error import ObtenerDatosIdcif5XXError
     from .obtener_datos_idcif_post_response import ObtenerDatosIdcifPostResponse
 
@@ -31,11 +31,11 @@ class ObtenerDatosIdcifRequestBuilder(BaseRequestBuilder):
         param request_adapter: The request adapter to use to execute the requests.
         Returns: None
         """
-        super().__init__(request_adapter, "{+baseurl}/api/sat/grupo/obtener-datos-idcif?rfc={rfc}{&idcif*}", path_parameters)
+        super().__init__(request_adapter, "{+baseurl}/api/sat/grupo/obtener-datos-idcif", path_parameters)
     
-    async def post(self,request_configuration: Optional[RequestConfiguration[ObtenerDatosIdcifRequestBuilderPostQueryParameters]] = None) -> Optional[ObtenerDatosIdcifPostResponse]:
+    async def post(self,request_configuration: Optional[RequestConfiguration[QueryParameters]] = None) -> Optional[ObtenerDatosIdcifPostResponse]:
         """
-        Valida los datos enviados buscando coincidencia con los registros en la base de datos del **SAT.**_Nota: Si el usuario a consultar tiene mas de un regimen, separe los condigo con un_ "|"
+        Obten todo el contenido en formato JSON de una Constancia de Situacion Fiscal emitida por el Servicio de Administracion Tributaria (SAT)
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: Optional[ObtenerDatosIdcifPostResponse]
         """
@@ -44,15 +44,15 @@ class ObtenerDatosIdcifRequestBuilder(BaseRequestBuilder):
         )
         from .obtener_datos_idcif400_error import ObtenerDatosIdcif400Error
         from .obtener_datos_idcif401_error import ObtenerDatosIdcif401Error
+        from .obtener_datos_idcif404_error import ObtenerDatosIdcif404Error
         from .obtener_datos_idcif4_x_x_error import ObtenerDatosIdcif4XXError
-        from .obtener_datos_idcif500_error import ObtenerDatosIdcif500Error
         from .obtener_datos_idcif5_x_x_error import ObtenerDatosIdcif5XXError
 
         error_mapping: Dict[str, ParsableFactory] = {
             "400": ObtenerDatosIdcif400Error,
             "401": ObtenerDatosIdcif401Error,
+            "404": ObtenerDatosIdcif404Error,
             "4XX": ObtenerDatosIdcif4XXError,
-            "500": ObtenerDatosIdcif500Error,
             "5XX": ObtenerDatosIdcif5XXError,
         }
         if not self.request_adapter:
@@ -61,9 +61,9 @@ class ObtenerDatosIdcifRequestBuilder(BaseRequestBuilder):
 
         return await self.request_adapter.send_async(request_info, ObtenerDatosIdcifPostResponse, error_mapping)
     
-    def to_post_request_information(self,request_configuration: Optional[RequestConfiguration[ObtenerDatosIdcifRequestBuilderPostQueryParameters]] = None) -> RequestInformation:
+    def to_post_request_information(self,request_configuration: Optional[RequestConfiguration[QueryParameters]] = None) -> RequestInformation:
         """
-        Valida los datos enviados buscando coincidencia con los registros en la base de datos del **SAT.**_Nota: Si el usuario a consultar tiene mas de un regimen, separe los condigo con un_ "|"
+        Obten todo el contenido en formato JSON de una Constancia de Situacion Fiscal emitida por el Servicio de Administracion Tributaria (SAT)
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: RequestInformation
         """
@@ -83,18 +83,7 @@ class ObtenerDatosIdcifRequestBuilder(BaseRequestBuilder):
         return ObtenerDatosIdcifRequestBuilder(self.request_adapter, raw_url)
     
     @dataclass
-    class ObtenerDatosIdcifRequestBuilderPostQueryParameters():
-        """
-        Valida los datos enviados buscando coincidencia con los registros en la base de datos del **SAT.**_Nota: Si el usuario a consultar tiene mas de un regimen, separe los condigo con un_ "|"
-        """
-        idcif: Optional[int] = None
-
-        # Registro Federal de Contribuyentes
-        rfc: Optional[str] = None
-
-    
-    @dataclass
-    class ObtenerDatosIdcifRequestBuilderPostRequestConfiguration(RequestConfiguration[ObtenerDatosIdcifRequestBuilderPostQueryParameters]):
+    class ObtenerDatosIdcifRequestBuilderPostRequestConfiguration(RequestConfiguration[QueryParameters]):
         """
         Configuration for the request such as headers, query parameters, and middleware options.
         """

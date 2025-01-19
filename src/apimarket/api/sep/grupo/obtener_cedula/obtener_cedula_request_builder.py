@@ -35,7 +35,7 @@ class ObtenerCedulaRequestBuilder(BaseRequestBuilder):
     
     async def post(self,request_configuration: Optional[RequestConfiguration[ObtenerCedulaRequestBuilderPostQueryParameters]] = None) -> Optional[ObtenerCedulaPostResponse]:
         """
-        Busca Cedulas relacionadas a los datos enviadas en la base de datos del **Registro Nacional de Profesionistas.**_Nota: esta busqueda no es con coincidencia exacta, mostrara todos los registros que contengan los datos enviados._
+        Busca Cedulas relacionadas a los datos enviadas en la base de datos del Registro Nacional de Profesionistas.Nota: esta búsqueda no es con coincidencia exacta, mostrara todos los registros que contengan los datos enviados.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: Optional[ObtenerCedulaPostResponse]
         """
@@ -63,7 +63,7 @@ class ObtenerCedulaRequestBuilder(BaseRequestBuilder):
     
     def to_post_request_information(self,request_configuration: Optional[RequestConfiguration[ObtenerCedulaRequestBuilderPostQueryParameters]] = None) -> RequestInformation:
         """
-        Busca Cedulas relacionadas a los datos enviadas en la base de datos del **Registro Nacional de Profesionistas.**_Nota: esta busqueda no es con coincidencia exacta, mostrara todos los registros que contengan los datos enviados._
+        Busca Cedulas relacionadas a los datos enviadas en la base de datos del Registro Nacional de Profesionistas.Nota: esta búsqueda no es con coincidencia exacta, mostrara todos los registros que contengan los datos enviados.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: RequestInformation
         """
@@ -85,7 +85,7 @@ class ObtenerCedulaRequestBuilder(BaseRequestBuilder):
     @dataclass
     class ObtenerCedulaRequestBuilderPostQueryParameters():
         """
-        Busca Cedulas relacionadas a los datos enviadas en la base de datos del **Registro Nacional de Profesionistas.**_Nota: esta busqueda no es con coincidencia exacta, mostrara todos los registros que contengan los datos enviados._
+        Busca Cedulas relacionadas a los datos enviadas en la base de datos del Registro Nacional de Profesionistas.Nota: esta búsqueda no es con coincidencia exacta, mostrara todos los registros que contengan los datos enviados.
         """
         # [OPCIONAL]
         materno: Optional[str] = None

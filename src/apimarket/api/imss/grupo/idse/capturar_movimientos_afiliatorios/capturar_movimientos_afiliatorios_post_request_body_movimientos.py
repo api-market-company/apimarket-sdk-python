@@ -1,8 +1,6 @@
 from __future__ import annotations
 import datetime
 from dataclasses import dataclass, field
-
-import dateparser
 from kiota_abstractions.serialization import AdditionalDataHolder, Parsable, ParseNode, SerializationWriter
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 
@@ -64,7 +62,7 @@ class CapturarMovimientosAfiliatoriosPostRequestBody_movimientos(AdditionalDataH
             "causaDeBaja": lambda n : setattr(self, 'causa_de_baja', n.get_str_value()),
             "claveDelTrabajador": lambda n : setattr(self, 'clave_del_trabajador', n.get_str_value()),
             "curp": lambda n : setattr(self, 'curp', n.get_str_value()),
-            "fechaDeMovimiento": lambda n : setattr(self, 'fecha_de_movimiento', dateparser.parse(n.get_str_value())),
+            "fechaDeMovimiento": lambda n : setattr(self, 'fecha_de_movimiento', n.get_date_value()),
             "jornada": lambda n : setattr(self, 'jornada', n.get_str_value()),
             "nombre": lambda n : setattr(self, 'nombre', n.get_str_value()),
             "nss": lambda n : setattr(self, 'nss', n.get_str_value()),

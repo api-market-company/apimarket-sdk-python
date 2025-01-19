@@ -7,6 +7,7 @@ from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 if TYPE_CHECKING:
     from .kie.kie_request_builder import KieRequestBuilder
     from .mrz.mrz_request_builder import MrzRequestBuilder
+    from .templates.templates_request_builder import TemplatesRequestBuilder
     from .universal_ocr.universal_ocr_request_builder import UniversalOcrRequestBuilder
 
 class V2RequestBuilder(BaseRequestBuilder):
@@ -39,6 +40,15 @@ class V2RequestBuilder(BaseRequestBuilder):
         from .mrz.mrz_request_builder import MrzRequestBuilder
 
         return MrzRequestBuilder(self.request_adapter, self.path_parameters)
+    
+    @property
+    def templates(self) -> TemplatesRequestBuilder:
+        """
+        The templates property
+        """
+        from .templates.templates_request_builder import TemplatesRequestBuilder
+
+        return TemplatesRequestBuilder(self.request_adapter, self.path_parameters)
     
     @property
     def universal_ocr(self) -> UniversalOcrRequestBuilder:

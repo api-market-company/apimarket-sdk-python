@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from .idse.idse_request_builder import IdseRequestBuilder
     from .localizar_nss.localizar_nss_request_builder import LocalizarNssRequestBuilder
     from .localizar_umf.localizar_umf_request_builder import LocalizarUmfRequestBuilder
+    from .obtener_datos_nss.obtener_datos_nss_request_builder import ObtenerDatosNssRequestBuilder
     from .umf_asignada.umf_asignada_request_builder import UmfAsignadaRequestBuilder
 
 class GrupoRequestBuilder(BaseRequestBuilder):
@@ -79,6 +80,15 @@ class GrupoRequestBuilder(BaseRequestBuilder):
         from .localizar_umf.localizar_umf_request_builder import LocalizarUmfRequestBuilder
 
         return LocalizarUmfRequestBuilder(self.request_adapter, self.path_parameters)
+    
+    @property
+    def obtener_datos_nss(self) -> ObtenerDatosNssRequestBuilder:
+        """
+        The obtenerDatosNss property
+        """
+        from .obtener_datos_nss.obtener_datos_nss_request_builder import ObtenerDatosNssRequestBuilder
+
+        return ObtenerDatosNssRequestBuilder(self.request_adapter, self.path_parameters)
     
     @property
     def umf_asignada(self) -> UmfAsignadaRequestBuilder:

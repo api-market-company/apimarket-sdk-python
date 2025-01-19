@@ -34,7 +34,7 @@ class ObtenerCurpRequestBuilder(BaseRequestBuilder):
     
     async def post(self,request_configuration: Optional[RequestConfiguration[ObtenerCurpRequestBuilderPostQueryParameters]] = None) -> Optional[ObtenerCurpPostResponse]:
         """
-        Obten la CURP de tus usuarios a traves del envio de sus datos.
+        Obtén la CURP de tus usuarios a traves del envio de sus datos.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: Optional[ObtenerCurpPostResponse]
         """
@@ -60,7 +60,7 @@ class ObtenerCurpRequestBuilder(BaseRequestBuilder):
     
     def to_post_request_information(self,request_configuration: Optional[RequestConfiguration[ObtenerCurpRequestBuilderPostQueryParameters]] = None) -> RequestInformation:
         """
-        Obten la CURP de tus usuarios a traves del envio de sus datos.
+        Obtén la CURP de tus usuarios a traves del envio de sus datos.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: RequestInformation
         """
@@ -82,7 +82,7 @@ class ObtenerCurpRequestBuilder(BaseRequestBuilder):
     @dataclass
     class ObtenerCurpRequestBuilderPostQueryParameters():
         """
-        Obten la CURP de tus usuarios a traves del envio de sus datos.
+        Obtén la CURP de tus usuarios a traves del envio de sus datos.
         """
         def get_query_parameter(self,original_name: str) -> str:
             """

@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from .lista69b401_error import Lista69b401Error
     from .lista69b4_x_x_error import Lista69b4XXError
     from .lista69b5_x_x_error import Lista69b5XXError
+    from .lista69b_post_response import Lista69bPostResponse
 
 class Lista69bRequestBuilder(BaseRequestBuilder):
     """
@@ -31,11 +32,11 @@ class Lista69bRequestBuilder(BaseRequestBuilder):
         """
         super().__init__(request_adapter, "{+baseurl}/api/sat/v2/lista69b{?contribuyente*,rfc*,select*}", path_parameters)
     
-    async def post(self,request_configuration: Optional[RequestConfiguration[Lista69bRequestBuilderPostQueryParameters]] = None) -> bytes:
+    async def post(self,request_configuration: Optional[RequestConfiguration[Lista69bRequestBuilderPostQueryParameters]] = None) -> Optional[Lista69bPostResponse]:
         """
         Consulta la lista 69B del SAT (Lista negra) con distintos filtros horizontales y verticales.
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
-        Returns: bytes
+        Returns: Optional[Lista69bPostResponse]
         """
         request_info = self.to_post_request_information(
             request_configuration
@@ -53,7 +54,9 @@ class Lista69bRequestBuilder(BaseRequestBuilder):
         }
         if not self.request_adapter:
             raise Exception("Http core is null") 
-        return await self.request_adapter.send_primitive_async(request_info, "bytes", error_mapping)
+        from .lista69b_post_response import Lista69bPostResponse
+
+        return await self.request_adapter.send_async(request_info, Lista69bPostResponse, error_mapping)
     
     def to_post_request_information(self,request_configuration: Optional[RequestConfiguration[Lista69bRequestBuilderPostQueryParameters]] = None) -> RequestInformation:
         """

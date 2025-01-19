@@ -34,7 +34,7 @@ class ValidarCedulaRequestBuilder(BaseRequestBuilder):
     
     async def post(self,request_configuration: Optional[RequestConfiguration[ValidarCedulaRequestBuilderPostQueryParameters]] = None) -> Optional[ValidarCedulaPostResponse]:
         """
-        Valida la cedula profesional enviada en la base de datos oficial del Registro Nacional de Profesionistas,
+        Valida la cédula profesional enviada en la base de datos oficial del Registro Nacional de Profesionistas,
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: Optional[ValidarCedulaPostResponse]
         """
@@ -60,7 +60,7 @@ class ValidarCedulaRequestBuilder(BaseRequestBuilder):
     
     def to_post_request_information(self,request_configuration: Optional[RequestConfiguration[ValidarCedulaRequestBuilderPostQueryParameters]] = None) -> RequestInformation:
         """
-        Valida la cedula profesional enviada en la base de datos oficial del Registro Nacional de Profesionistas,
+        Valida la cédula profesional enviada en la base de datos oficial del Registro Nacional de Profesionistas,
         param request_configuration: Configuration for the request such as headers, query parameters, and middleware options.
         Returns: RequestInformation
         """
@@ -82,7 +82,7 @@ class ValidarCedulaRequestBuilder(BaseRequestBuilder):
     @dataclass
     class ValidarCedulaRequestBuilderPostQueryParameters():
         """
-        Valida la cedula profesional enviada en la base de datos oficial del Registro Nacional de Profesionistas,
+        Valida la cédula profesional enviada en la base de datos oficial del Registro Nacional de Profesionistas,
         """
         # Cedula profesional
         cedula: Optional[int] = None
