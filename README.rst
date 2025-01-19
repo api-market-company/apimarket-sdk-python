@@ -18,10 +18,10 @@ apimarket
 This SDK is an open-source development project that enables you to connect to ApiMarket services using Python.
 
 Benefits
-    Algorithm-based verifications.
-    Exponential retry mechanism.
-    Transparent saving to your backend, with default caching on your file system.
-    Typing support for seamless use in your IDE.
+    - Algorithm-based verifications.
+    - Exponential retry mechanism.
+    - Transparent saving to your backend, with default caching on your file system.
+    - Typing support for seamless use in your IDE.
 
 
 
@@ -41,6 +41,7 @@ Getting Started
 2. Choose the service you need https://apimarket.mx/marketplace and select the Python SDK
 
 3. Test your code
+
 .. code-block:: python3
 
    import apimarket
@@ -182,5 +183,6 @@ Correo
 ++++++++++++++++++++++++++++++++++++
 
 Mediante correo electrónico: soporte@apimarket.mx
+
 WhatsApp: https://api.whatsapp.com/message/CEUT72XQ5FKGP1
 
