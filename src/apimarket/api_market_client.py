@@ -40,6 +40,7 @@ class ApiMarketClient(BaseRequestBuilder):
         if not self.request_adapter.base_url:
             self.request_adapter.base_url = "https://apimarket.mx"
         self.path_parameters["base_url"] = self.request_adapter.base_url
+        self.path_parameters["idsepro_base_url"] = "https://idsepro.apimarket.mx/rest/v1"
     
     @property
     def api(self) -> ApiRequestBuilder:

@@ -1,0 +1,17 @@
+services:
+  sdk-app:
+    build: .
+    volumes:
+      - .:/app
+    tty: true
+    stdin_open: true
+
+  jupyter:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "8888:8888"
+    environment:
+      - APIMARKET_API_KEY=${APIMARKET_API_KEY}
+    command: bash -c "pip install --quiet jupyter ipykernel && jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password='' --notebook-dir=/app/notebooks"

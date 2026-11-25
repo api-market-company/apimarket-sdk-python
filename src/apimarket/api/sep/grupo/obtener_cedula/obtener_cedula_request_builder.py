@@ -31,7 +31,7 @@ class ObtenerCedulaRequestBuilder(BaseRequestBuilder):
         param request_adapter: The request adapter to use to execute the requests.
         Returns: None
         """
-        super().__init__(request_adapter, "{+baseurl}/api/sep/grupo/obtener-cedula?nombres={nombres}&paterno={paterno}{&materno*}", path_parameters)
+        super().__init__(request_adapter, "{+baseurl}/api/sep/grupo/obtener-cedula?curp={curp}", path_parameters)
     
     async def post(self,request_configuration: Optional[RequestConfiguration[ObtenerCedulaRequestBuilderPostQueryParameters]] = None) -> Optional[ObtenerCedulaPostResponse]:
         """
@@ -85,14 +85,9 @@ class ObtenerCedulaRequestBuilder(BaseRequestBuilder):
     @dataclass
     class ObtenerCedulaRequestBuilderPostQueryParameters():
         """
-        Busca Cedulas relacionadas a los datos enviadas en la base de datos del Registro Nacional de Profesionistas.Nota: esta búsqueda no es con coincidencia exacta, mostrara todos los registros que contengan los datos enviados.
+        Busca Cedulas relacionadas a los datos enviadas en la base de datos del Registro Nacional de Profesionistas.
         """
-        # [OPCIONAL]
-        materno: Optional[str] = None
-
-        nombres: Optional[str] = None
-
-        paterno: Optional[str] = None
+        curp: Optional[str] = None
 
     
     @dataclass

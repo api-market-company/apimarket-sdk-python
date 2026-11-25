@@ -30,7 +30,7 @@ class Lista69bRequestBuilder(BaseRequestBuilder):
         param request_adapter: The request adapter to use to execute the requests.
         Returns: None
         """
-        super().__init__(request_adapter, "{+baseurl}/api/sat/v2/lista69b{?contribuyente*,rfc*,select*}", path_parameters)
+        super().__init__(request_adapter, "{+baseurl}/api/sat/v2/lista69b{?nombre_contribuyente*,rfc*,select*}", path_parameters)
     
     async def post(self,request_configuration: Optional[RequestConfiguration[Lista69bRequestBuilderPostQueryParameters]] = None) -> Optional[Lista69bPostResponse]:
         """
@@ -67,6 +67,7 @@ class Lista69bRequestBuilder(BaseRequestBuilder):
         request_info = RequestInformation(Method.POST, self.url_template, self.path_parameters)
         request_info.configure(request_configuration)
         request_info.headers.try_add("Accept", "application/json")
+        request_info.headers.try_add("Range", "0-9")
         return request_info
     
     def with_url(self,raw_url: str) -> Lista69bRequestBuilder:
@@ -84,8 +85,7 @@ class Lista69bRequestBuilder(BaseRequestBuilder):
         """
         Consulta la lista 69B del SAT (Lista negra) con distintos filtros horizontales y verticales.
         """
-        # Con wfts buscas con un lenguaje cercano al natural. 
-        contribuyente: Optional[str] = None
+        nombre_contribuyente: Optional[str] = None
 
         # Con match buscas con un expresión regular POSIX.
         rfc: Optional[str] = None

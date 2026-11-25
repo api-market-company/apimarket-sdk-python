@@ -1,42 +1,43 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
 from kiota_abstractions.serialization import AdditionalDataHolder, Parsable, ParseNode, SerializationWriter
-from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .lista69b_post_response_data_item import Lista69bPostResponseDataItem
+
 
 @dataclass
 class Lista69bPostResponse(AdditionalDataHolder, Parsable):
-    # Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.
     additional_data: Dict[str, Any] = field(default_factory=dict)
+    codigo_validacion: Optional[str] = None
+    data: Optional[List[Lista69bPostResponseDataItem]] = None
+    message: Optional[str] = None
+    status: Optional[int] = None
+    success: Optional[bool] = None
 
-    
     @staticmethod
     def create_from_discriminator_value(parse_node: ParseNode) -> Lista69bPostResponse:
-        """
-        Creates a new instance of the appropriate class based on discriminator value
-        param parse_node: The parse node to use to read the discriminator value and create the object
-        Returns: Lista69bPostResponse
-        """
         if not parse_node:
             raise TypeError("parse_node cannot be null.")
         return Lista69bPostResponse()
-    
-    def get_field_deserializers(self,) -> Dict[str, Callable[[ParseNode], None]]:
-        """
-        The deserialization information for the current model
-        Returns: Dict[str, Callable[[ParseNode], None]]
-        """
-        fields: Dict[str, Callable[[Any], None]] = {
+
+    def get_field_deserializers(self) -> Dict[str, Callable[[ParseNode], None]]:
+        from .lista69b_post_response_data_item import Lista69bPostResponseDataItem
+        return {
+            "codigoValidacion": lambda n: setattr(self, 'codigo_validacion', n.get_str_value()),
+            "data":             lambda n: setattr(self, 'data', n.get_collection_of_object_values(Lista69bPostResponseDataItem)),
+            "message":          lambda n: setattr(self, 'message', n.get_str_value()),
+            "status":           lambda n: setattr(self, 'status', n.get_int_value()),
+            "success":          lambda n: setattr(self, 'success', n.get_bool_value()),
         }
-        return fields
-    
-    def serialize(self,writer: SerializationWriter) -> None:
-        """
-        Serializes information the current object
-        param writer: Serialization writer to use to serialize this model
-        Returns: None
-        """
+
+    def serialize(self, writer: SerializationWriter) -> None:
         if not writer:
             raise TypeError("writer cannot be null.")
+        writer.write_str_value("codigoValidacion", self.codigo_validacion)
+        writer.write_collection_of_object_values("data", self.data)
+        writer.write_str_value("message", self.message)
+        writer.write_int_value("status", self.status)
+        writer.write_bool_value("success", self.success)
         writer.write_additional_data_value(self.additional_data)
-    
-

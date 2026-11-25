@@ -155,6 +155,43 @@ csvcut belongs to csvkit library
    csvcut apimarket-consulta.csv -c 'CURP' | xargs -P 8 -I {} apimarket -c {} 2>"error.txt" | jq -s > curps.json
 
 
+Todos los servicios
+--------------------
+
+Además de las funciones anteriores, el SDK incluye los servicios de cuenta, geolocalización,
+IMSS e IDSE, INFONAVIT, RENAPO, REPUVE, SAT, SEP e inteligencia artificial.
+Estos devuelven la respuesta JSON como ``dict`` y lanzan ``apimarket.ApiMarketError``
+cuando la API responde con un error.
+
+.. code-block:: python3
+
+   import apimarket
+
+   apimarket.assemble(api_key="REPLACE-WITH-YOUR-API-HERE")
+
+   try:
+       vehiculo = apimarket.get_vehicle_data(placas="ABC1234")
+       opinion = apimarket.get_sat_compliance_opinion(rfc="XAXX010101000", ciec="MI-CIEC")
+       texto = apimarket.ocr_id("anverso.jpg", "reverso.jpg")
+   except apimarket.ApiMarketError as error:
+       print(error.response_status_code, error.message, error.codigo_validacion)
+
+Todas las funciones validan sus parámetros antes de llamar a la API y lanzan una subclase de
+``apimarket.ValidationError``. Todos los errores, también los de la API y de red, llevan un ``code``.
+El catálogo está en `docs/error_catalog.rst <./docs/error_catalog.rst>`_ y en ``apimarket errores``.
+
+Desde la CLI se usan como ``apimarket GRUPO SERVICIO``:
+
+.. code-block:: bash
+
+   apimarket servicios
+   apimarket repuve vehiculo --placas ABC1234 --sandbox
+   apimarket sat declaraciones --year 2024 --rfc XAXX010101000 --ciec MI-CIEC
+   apimarket ai ocr-id --anverso anverso.jpg --reverso reverso.jpg
+   apimarket imss idse-capturar --movimientos @movimientos.json --webhook https://example.com/hook
+   apimarket infonavit historico --help
+
+
 .. _pyscaffold-notes:
 
 

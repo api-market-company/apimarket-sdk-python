@@ -30,6 +30,9 @@ Contents
    :maxdepth: 2
 
    Overview <readme>
+   CLI Reference <cli>
+   Error Catalog <error_catalog>
+   Testing <testing>
    Contributions & Help <contributing>
    License <license>
    Authors <authors>

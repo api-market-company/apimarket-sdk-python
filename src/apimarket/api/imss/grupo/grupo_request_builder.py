@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from .con_clinica.con_clinica_request_builder import ConClinicaRequestBuilder
     from .historial_laboral.historial_laboral_request_builder import HistorialLaboralRequestBuilder
     from .idse.idse_request_builder import IdseRequestBuilder
+    from .idse_pro.idse_pro_request_builder import IdseProRequestBuilder
     from .localizar_nss.localizar_nss_request_builder import LocalizarNssRequestBuilder
     from .localizar_umf.localizar_umf_request_builder import LocalizarUmfRequestBuilder
     from .obtener_datos_nss.obtener_datos_nss_request_builder import ObtenerDatosNssRequestBuilder
@@ -63,6 +64,14 @@ class GrupoRequestBuilder(BaseRequestBuilder):
 
         return IdseRequestBuilder(self.request_adapter, self.path_parameters)
     
+    @property
+    def idse_pro(self) -> IdseProRequestBuilder:
+        """
+        The idsePro property
+        """
+        from .idse_pro.idse_pro_request_builder import IdseProRequestBuilder
+        return IdseProRequestBuilder(self.request_adapter, self.path_parameters)
+
     @property
     def localizar_nss(self) -> LocalizarNssRequestBuilder:
         """

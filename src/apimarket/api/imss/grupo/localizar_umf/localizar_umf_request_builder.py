@@ -85,7 +85,7 @@ class LocalizarUmfRequestBuilder(BaseRequestBuilder):
         Obtiene las clinicas que brindan atencion medica a los habitantes de ese codigo postal, las clinicas mas cercanas y posibles asignadas, brinda coordenadas de ubicacion, direccion y numero de contacto de cada clinica.
         """
         # Codigo Postal
-        cp: Optional[int] = None
+        cp: Optional[str] = None
 
     
     @dataclass
