@@ -87,7 +87,7 @@ class ValidarDatosRequestBuilder(BaseRequestBuilder):
         """
         Valida los datos enviados buscando coincidencia con los registros en la base de datos del SAT.Nota: Si el usuario a consultar tiene mas de un regimen, separalos con un pipe |.
         """
-        cp: Optional[int] = None
+        cp: Optional[str] = None
 
         nombre: Optional[str] = None
 

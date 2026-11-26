@@ -5,6 +5,7 @@ from kiota_abstractions.request_adapter import RequestAdapter
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
+    from .buscar_nacimiento.buscar_nacimiento_request_builder import BuscarNacimientoRequestBuilder
     from .obtener_acta_de_nacimiento.obtener_acta_de_nacimiento_request_builder import ObtenerActaDeNacimientoRequestBuilder
     from .obtener_curp.obtener_curp_request_builder import ObtenerCurpRequestBuilder
     from .valida_curp.valida_curp_request_builder import ValidaCurpRequestBuilder
@@ -22,6 +23,11 @@ class GrupoRequestBuilder(BaseRequestBuilder):
         """
         super().__init__(request_adapter, "{+baseurl}/api/renapo/grupo", path_parameters)
     
+    @property
+    def buscar_nacimiento(self) -> BuscarNacimientoRequestBuilder:
+        from .buscar_nacimiento.buscar_nacimiento_request_builder import BuscarNacimientoRequestBuilder
+        return BuscarNacimientoRequestBuilder(self.request_adapter, self.path_parameters)
+
     @property
     def obtener_acta_de_nacimiento(self) -> ObtenerActaDeNacimientoRequestBuilder:
         """

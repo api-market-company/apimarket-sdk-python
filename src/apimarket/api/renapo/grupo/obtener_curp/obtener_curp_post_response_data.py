@@ -16,6 +16,8 @@ class ObtenerCurpPostResponse_data(AdditionalDataHolder, Parsable):
     apellido_paterno: Optional[str] = None
     # The curp property
     curp: Optional[str] = None
+    # The estadoNacimiento property
+    estado_nacimiento: Optional[str] = None
     # The fechaNacimiento property
     fecha_nacimiento: Optional[datetime.date] = None
     # The mensaje property
@@ -45,6 +47,7 @@ class ObtenerCurpPostResponse_data(AdditionalDataHolder, Parsable):
             "apellidoMaterno": lambda n : setattr(self, 'apellido_materno', n.get_str_value()),
             "apellidoPaterno": lambda n : setattr(self, 'apellido_paterno', n.get_str_value()),
             "curp": lambda n : setattr(self, 'curp', n.get_str_value()),
+            "estadoNacimiento": lambda n : setattr(self, 'estado_nacimiento', n.get_str_value()),
             "fechaNacimiento": lambda n : setattr(self, 'fecha_nacimiento', dateparser.parse(n.get_str_value())),
             "mensaje": lambda n : setattr(self, 'mensaje', n.get_str_value()),
             "nombres": lambda n : setattr(self, 'nombres', n.get_str_value()),
@@ -63,6 +66,7 @@ class ObtenerCurpPostResponse_data(AdditionalDataHolder, Parsable):
         writer.write_str_value("apellidoMaterno", self.apellido_materno)
         writer.write_str_value("apellidoPaterno", self.apellido_paterno)
         writer.write_str_value("curp", self.curp)
+        writer.write_str_value("estadoNacimiento", self.estado_nacimiento)
         writer.write_date_value("fechaNacimiento", self.fecha_nacimiento)
         writer.write_str_value("mensaje", self.mensaje)
         writer.write_str_value("nombres", self.nombres)
